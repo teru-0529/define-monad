@@ -197,7 +197,7 @@ Public Sub out_view(ByVal line_sep As Integer)
     End If
   Next elm
   
-  Call text_io.plain_out(settings.view_derive_elements_path(), data, line_sep)
+  Call text_io.plain_out(Config.VIEW_DERIVE_ELEMENTS, data, line_sep)
 End Sub
 
 

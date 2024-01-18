@@ -58,3 +58,7 @@ git fetch -p
 * Util.showTime()のリファクタリング
 * Process.validate()の実装
 * Process.outerExec()の実装
+* versionをバックエンドからとる
+* savedata.yamlにバージョン追加
+* iniファイルの適用
+* settingsシート削除

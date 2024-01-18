@@ -9,7 +9,7 @@ Public Sub load_(ByVal line_sep As Integer)
   Dim elements_d() As String, derive_elements_d() As String, segments_d() As String
   Dim s1 As Long, s2 As Long
   
-  data = text_io.plain_in(settings.save_data_path(), line_sep)
+  data = text_io.plain_in(Config.SAVE_DATA, line_sep)
 
   '区切り文字の行番号
   s1 = get_sep_no(data, "delive_elements :")
@@ -72,7 +72,6 @@ Public Sub save_(ByVal line_sep As Integer)
   Call segments.save_(data)
   
   Call text_io.plain_out(Config.SAVE_DATA, data, line_sep)
-  'Call text_io.plain_out(settings.save_data_path(), data, line_sep)
 End Sub
 
 'table_elements.yaml.出力
@@ -84,7 +83,7 @@ Public Sub out_table_elements(ByVal line_sep As Integer)
   'delive_elements出力
   Call derive_elements.out_table(data)
   
-  Call text_io.plain_out(settings.table_elements_path(), data, line_sep)
+  Call text_io.plain_out(Config.TABLE_ELEMENTS, data, line_sep)
 End Sub
 
 
@@ -95,7 +94,7 @@ Public Sub out_api_elements(ByVal line_sep As Integer)
   'elements出力
   Call elements.out_api(data)
   
-  Call text_io.plain_out(settings.api_elements_path(), data, line_sep)
+  Call text_io.plain_out(Config.API_ELEMENTS, data, line_sep)
 End Sub
 
 
@@ -108,6 +107,6 @@ Public Sub out_type_ddl(ByVal line_sep As Integer)
   'elements出力
   Call elements.out_type_ddl(data)
   
-  Call text_io.plain_out(settings.types_ddl_path(), data, line_sep)
+  Call text_io.plain_out(Config.TYPES_DDL, data, line_sep)
 End Sub
 

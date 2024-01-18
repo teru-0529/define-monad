@@ -192,5 +192,5 @@ Public Sub out_view(ByVal line_sep As Integer)
     End If
   Next elm
   
-  Call text_io.plain_out(settings.view_segments_path(), data, line_sep)
+  Call text_io.plain_out(Config.VIEW_SEGMENTS, data, line_sep)
 End Sub

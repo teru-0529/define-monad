@@ -14,12 +14,15 @@ Dim start_time As Double
 Private Sub Workbook_Open()
   start_time = Timer
 
+  '// パス情報の取得
+  Call Config.init("vba.ini")
+
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   '業務ロジック
   Call work.element_reflesh '項目リストの最新化
   Call work.segment_reflesh '区分値リストの最新化
-  
+
   Call read_write_files.load_(adLF)
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   Application.ScreenUpdating = True
@@ -41,6 +44,7 @@ End Sub
 ' 保存時
 Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 
+  '// パス情報の取得
   Call Config.init("vba.ini")
 
   Application.ScreenUpdating = False
@@ -50,7 +54,7 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
   Call read_write_files.out_table_elements(adLF)
   Call read_write_files.out_api_elements(adLF)
   Call read_write_files.out_type_ddl(adLF)
-  
+
   Call elements.out_view(adLF)
   Call derive_elements.out_view(adLF)
   Call segments.out_view(adLF)
