@@ -29,4 +29,36 @@ cobra-cli add save
 cobra-cli add load
 ```
 
+```console
+go install github.com/linyows/git-semv/cmd/git-semv
+
+git semv
+git semv -a
+git semv now
+git semv patch
+git semv minor
+git semv major
+git semv major --pre
+git semv major --pre-name rc
+git semv patch --bump
+
+git push --delete origin v1.0.0-rc.0
+
+git fetch -p
+```
+
 * version サブコマンドの実装
+
+-F オプション
+
+## Excel初期設定
+
+* v2.0.5がそのまま動くことの確認・・・OK
+* ExportModule.basの適応・・・OK
+* Util.showTime()のリファクタリング
+* Process.validate()の実装
+* Process.outerExec()の実装
+* versionをバックエンドからとる
+* savedata.yamlにバージョン追加
+* iniファイルの適用
+* settingsシート削除

@@ -9,15 +9,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var full bool
+
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
 	Use:   "version",
-	Short: "Show semantic version and release date.",
-	Long:  "Show semantic version and release date.",
+	Short: "Show semantic version.",
+	Long:  "Show semantic version.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Printf("version: %s (releasedAt: %s)\n", version, releaseDate)
+		if full {
+			fmt.Printf("version: %s (releasedAt: %s)", version, releaseDate)
+		} else {
+			fmt.Print(version)
+		}
 	},
 }
 
 func init() {
+	// INFO:フラグ値を変数にBind
+	versionCmd.Flags().BoolVarP(&full, "full", "F", false, "show with release-date by option flag.")
 }

@@ -1,0 +1,5 @@
+派生元	名称(JP)	名称(EN)	説明
+定価	キャンペーン定価	campanePrice	キャンペーンの定価 
+ユーザーID	受注担当者ID	orderPIC	受注担当者のユーザーID 
+ユーザーID	商品担当者ID	productPIC	商品管理者のユーザーID 
+部署	売上計上部署	saleseDepartment	売上計上部署 
