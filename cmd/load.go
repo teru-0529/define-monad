@@ -13,8 +13,8 @@ var inputFile string
 // loadCmd represents the load command
 var loadCmd = &cobra.Command{
 	Use:   "load",
-	Short: "load from yaml data and set excel sheet.",
-	Long:  "load from yaml data and set excel sheet.",
+	Short: "Read savedata from yaml and set excel sheet.",
+	Long:  "Read savedata from yaml and set excel sheet.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(inputFile)
 		fmt.Println("load called")
