@@ -26,7 +26,7 @@ Private Sub Workbook_Open()
   Application.StatusBar = False
 
   Call showTime(Timer - start_time)
-  MsgBox Config.getVersion()
+  MsgBox Config.getFullVersion()
 End Sub
 
 ' 保存時
@@ -61,7 +61,7 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 
   '// 開発モードの場合、モジュールを出力
   If IS_DEVELOP_MODE Then Call ExportModule.SaveModule
-  Debug.Print Process.outerExec("version -F")
   Debug.Print Config.getVersion
+  Debug.Print Config.getFullVersion
 
 End Sub
