@@ -20,7 +20,7 @@ var versionCmd = &cobra.Command{
 		if full {
 			fmt.Printf("version: %s (releasedAt: %s)", version, releaseDate)
 		} else {
-			fmt.Println(version)
+			fmt.Print(version)
 		}
 	},
 }
