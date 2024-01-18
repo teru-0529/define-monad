@@ -49,6 +49,12 @@ git fetch -p
 
 * version サブコマンドの実装
 
+-F オプション
+
 ## Excel初期設定
 
 * v2.0.5がそのまま動くことの確認・・・OK
+* ExportModule.basの適応・・・OK
+* Util.showTime()のリファクタリング
+* Process.validate()の実装
+* Process.outerExec()の実装
