@@ -41,6 +41,8 @@ End Sub
 ' ï€ë∂éû
 Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 
+  Call Config.init("vba.ini")
+
   Application.ScreenUpdating = False
   'Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°Å°
   'ã∆ñ±ÉçÉWÉbÉN

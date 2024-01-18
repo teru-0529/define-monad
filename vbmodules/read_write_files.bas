@@ -71,7 +71,8 @@ Public Sub save_(ByVal line_sep As Integer)
   'segmentso—Í
   Call segments.save_(data)
   
-  Call text_io.plain_out(settings.save_data_path(), data, line_sep)
+  Call text_io.plain_out(Config.SAVE_DATA, data, line_sep)
+  'Call text_io.plain_out(settings.save_data_path(), data, line_sep)
 End Sub
 
 'table_elements.yaml.o—Í
