@@ -2,6 +2,7 @@ Attribute VB_Name = "read_write_files"
 Option Explicit
 
 'save_data.yaml.入力
+'// FIXME:★★★★Refactering to Backend
 Public Sub load_(ByVal line_sep As Integer)
   Dim data() As String, row_length As Long, i As Long, temp As Variant
   
@@ -15,7 +16,7 @@ Public Sub load_(ByVal line_sep As Integer)
   s2 = get_sep_no(data, "segments :")
   
   'elements入力
-  For i = 1 To (s1 - 1)
+  For i = 3 To (s1 - 1)
     Call push_array(elements_d, data(i))
   Next i
   Call elements.load_(elements_d)
@@ -35,6 +36,7 @@ Public Sub load_(ByVal line_sep As Integer)
 End Sub
 
 'セパレート文字列の行番号
+'// FIXME:★★★★Refactering to Backend
 Private Function get_sep_no(ByRef data() As String, find_val As String) As Long
   Dim i As Long
   
@@ -50,9 +52,13 @@ End Function
 
 
 'save_data.yaml.出力
+'// FIXME:★★★★Refactering to Backend
 Public Sub save_(ByVal line_sep As Integer)
   Dim data() As String
-  
+
+  Call push_array(data, "data_type : define_elements")
+  Call push_array(data, "version : " & Config.getVersion())
+
   Call push_array(data, "elements :")
   'elements出力
   Call elements.save_(data)

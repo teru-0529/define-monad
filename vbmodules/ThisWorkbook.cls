@@ -61,7 +61,6 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 
   '// 開発モードの場合、モジュールを出力
   If IS_DEVELOP_MODE Then Call ExportModule.SaveModule
-  Debug.Print Config.getVersion
   Debug.Print Config.getFullVersion
 
 End Sub
