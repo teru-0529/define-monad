@@ -12,8 +12,8 @@ Public Sub load_(ByVal line_sep As Integer)
   data = text_io.plain_in(Config.SAVE_DATA, line_sep)
 
   '‹æØ‚è•¶š‚Ìs”Ô†
-  s1 = get_sep_no(data, "delive_elements :")
-  s2 = get_sep_no(data, "segments :")
+  s1 = get_sep_no(data, "delive_elements:")
+  s2 = get_sep_no(data, "segments:")
   
   'elements“ü—Í
   For i = 3 To (s1 - 1)

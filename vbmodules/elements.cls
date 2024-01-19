@@ -337,7 +337,7 @@ End Function
 'save_data“Ç
 '// FIXME:ššššRefactering to Backend
 Public Sub load_(ByRef data() As String)
-  Const PARAMS = 13
+  Const PARAMS = 12
   Dim row_length As Long: row_length = (UBound(data) + 1) / PARAMS
   Dim i As Long
   ReDim wk_range_1(row_length - 1, 1)
@@ -399,7 +399,6 @@ Private Sub save_item(ByRef data() As String, ByVal elm As Range)
   Call push_array(data, indent(2) & to_yaml("max_value_boundory", Cells(i, col_no.Å‘å’lŠÜ).value))
   Call push_array(data, indent(2) & to_yaml("example", Cells(i, col_no.API—á).value))
   Call push_array(data, indent(2) & to_yaml("description", Cells(i, col_no.à–¾).value))
-  Call push_array(data, "")
 End Sub
 
 
