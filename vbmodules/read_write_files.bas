@@ -56,18 +56,18 @@ End Function
 Public Sub save_(ByVal line_sep As Integer)
   Dim data() As String
 
-  Call push_array(data, "data_type : define_elements")
-  Call push_array(data, "version : " & Config.getVersion())
+  Call push_array(data, "data_type: define_elements")
+  Call push_array(data, "version: " & Config.getVersion())
 
-  Call push_array(data, "elements :")
+  Call push_array(data, "elements:")
   'elementso—Í
   Call elements.save_(data)
   
-  Call push_array(data, "delive_elements :")
+  Call push_array(data, "delive_elements:")
   'delive_elementso—Í
   Call derive_elements.save_(data)
   
-  Call push_array(data, "segments :")
+  Call push_array(data, "segments:")
   'segmentso—Í
   Call segments.save_(data)
   

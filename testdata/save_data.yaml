@@ -1,6 +1,6 @@
-data_type : define_elements
-version : dev
-elements :
+data_type: define_elements
+version: 3.0.0
+elements:
   - name_jp: 商品No
     name_en: productNo
     domain: NO
@@ -300,7 +300,7 @@ elements :
     example: STANDARD
     description: 取引先の区分
 
-delive_elements :
+delive_elements:
   - origin: 定価
     name_jp: キャンペーン定価
     name_en: campanePrice
@@ -321,7 +321,7 @@ delive_elements :
     name_en: saleseDepartment
     description: 売上計上部署
 
-segments :
+segments:
   - key: 商品区分
     value: NO_CHECKED
     name: 未確認
