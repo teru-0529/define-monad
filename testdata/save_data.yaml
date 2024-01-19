@@ -8,9 +8,7 @@ elements:
     min_digits: 9
     max_digits: 10
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: AAA000001
     description: 商品特定のユニークキー
   - name_jp: 定価
@@ -20,9 +18,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: 0
-    min_value_boundory: 1
     max_value: 99999
-    max_value_boundory: 1
     example: 14000
     description: 円、希望小売価格
   - name_jp: UP
@@ -32,9 +28,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: 0
-    min_value_boundory: null
     max_value: 1000
-    max_value_boundory: 1
     example: 250.25
     description: 仕入れ先からの購入価格
   - name_jp: 登録日
@@ -44,9 +38,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: 2022-12-31
     description: 登録日
   - name_jp: 商品区分
@@ -56,9 +48,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: NORMAL
     description: 商品の状態を表す区分
   - name_jp: コメント
@@ -68,9 +58,7 @@ elements:
     min_digits: 10
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: 制御用装置
     description: コメント
   - name_jp: 更新可能
@@ -80,9 +68,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: false
     description: 更新可否
   - name_jp: 部署
@@ -92,9 +78,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: ORDERING
     description: 部署
   - name_jp: 受注日
@@ -104,9 +88,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: 2022-12-31
     description: 受注日
   - name_jp: 数量
@@ -116,9 +98,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: 0
-    min_value_boundory: 1
     max_value: 99999
-    max_value_boundory: 1
     example: 30
     description: 数量
   - name_jp: 受注No
@@ -128,9 +108,7 @@ elements:
     min_digits: 10
     max_digits: 10
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: RO-0000001
     description: 受注番号
   - name_jp: 受注連番
@@ -140,9 +118,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: 1051
     description: 受注明細番号
   - name_jp: 担当者名
@@ -152,9 +128,7 @@ elements:
     min_digits: null
     max_digits: 30
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: 織田信長
     description: 業務担当者
   - name_jp: ユーザーID
@@ -164,9 +138,7 @@ elements:
     min_digits: 4
     max_digits: 4
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: 0001
     description: システム利用ユーザー
   - name_jp: 商品名称
@@ -176,9 +148,7 @@ elements:
     min_digits: null
     max_digits: 100
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: 日本刀
     description: 取扱商品名
   - name_jp: 得意先ID
@@ -188,9 +158,7 @@ elements:
     min_digits: 3
     max_digits: 3
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: A01
     description: 得意先のID
   - name_jp: 得意先
@@ -200,9 +168,7 @@ elements:
     min_digits: null
     max_digits: 100
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: 徳川物産
     description: 得意先の名称
   - name_jp: 稼働中
@@ -212,9 +178,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: true
     description: 稼働状況
   - name_jp: 利益率
@@ -224,9 +188,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: -10
-    min_value_boundory: 1
     max_value: 10
-    max_value_boundory: 1
     example: 0.324
     description: 利益率
   - name_jp: 帳票未表示
@@ -236,9 +198,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: true
     description: 帳票などに出力しない場合にtrue
   - name_jp: 発送時間
@@ -248,9 +208,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: 14:00
     description: 出荷時間
   - name_jp: 取引有無
@@ -260,9 +218,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: true
     description: 取引中かどうか
   - name_jp: 取引先区分
@@ -272,9 +228,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: null
-    min_value_boundory: null
     max_value: null
-    max_value_boundory: null
     example: STANDARD
     description: 取引先の区分
 delive_elements:

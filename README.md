@@ -74,3 +74,8 @@ git fetch -p
 
 * sphinx用のtsvをyamlから作成する
 https://zenn.dev/harachan/articles/ddea0e7fd3b08f
+
+* savedata.yamlの修正
+  * 「：」の前のスペース除去
+  * スペース行除去
+  * 最大最小含む、の項目なくす

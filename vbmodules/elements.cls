@@ -337,7 +337,7 @@ End Function
 'save_data読込
 '// FIXME:★★★★Refactering to Backend
 Public Sub load_(ByRef data() As String)
-  Const PARAMS = 12
+  Const PARAMS = 10
   Dim row_length As Long: row_length = (UBound(data) + 1) / PARAMS
   Dim i As Long
   ReDim wk_range_1(row_length - 1, 1)
@@ -355,11 +355,11 @@ Public Sub load_(ByRef data() As String)
     wk_range_2(i, 2) = from_yaml(data(i * PARAMS + 4))  '最小桁数
     wk_range_2(i, 3) = from_yaml(data(i * PARAMS + 5))  '最大桁数
     wk_range_2(i, 4) = from_yaml(data(i * PARAMS + 6))  '最小値
-    wk_range_2(i, 5) = from_yaml(data(i * PARAMS + 7))  '最小値含む
-    wk_range_2(i, 6) = from_yaml(data(i * PARAMS + 8))  '最大値
-    wk_range_2(i, 7) = from_yaml(data(i * PARAMS + 9))  '最大値含む
-    wk_range_2(i, 8) = from_yaml(data(i * PARAMS + 10))  '例
-    wk_range_2(i, 9) = from_yaml(data(i * PARAMS + 11))  '説明
+    wk_range_2(i, 5) = 0 '最小値含む
+    wk_range_2(i, 6) = from_yaml(data(i * PARAMS + 7))  '最大値
+    wk_range_2(i, 7) = 0 '最大値含む
+    wk_range_2(i, 8) = from_yaml(data(i * PARAMS + 8))  '例
+    wk_range_2(i, 9) = from_yaml(data(i * PARAMS + 9))  '説明
   Next i
   
   '値セット
@@ -394,9 +394,7 @@ Private Sub save_item(ByRef data() As String, ByVal elm As Range)
   Call push_array(data, indent(2) & to_yaml("min_digits", Cells(i, col_no.最小桁数).value))
   Call push_array(data, indent(2) & to_yaml("max_digits", Cells(i, col_no.最大桁数).value))
   Call push_array(data, indent(2) & to_yaml("min_value", Cells(i, col_no.最小値).value))
-  Call push_array(data, indent(2) & to_yaml("min_value_boundory", Cells(i, col_no.最小値含).value))
   Call push_array(data, indent(2) & to_yaml("max_value", Cells(i, col_no.最大値).value))
-  Call push_array(data, indent(2) & to_yaml("max_value_boundory", Cells(i, col_no.最大値含).value))
   Call push_array(data, indent(2) & to_yaml("example", Cells(i, col_no.API例).value))
   Call push_array(data, indent(2) & to_yaml("description", Cells(i, col_no.説明).value))
 End Sub
@@ -455,8 +453,6 @@ Private Sub api_item(ByRef data() As String, ByVal elm As Range)
   If Cells(i, col_no.最大桁数).value <> "" Then Call push_array(data, indent(1) & to_yaml("maxLength", Cells(i, col_no.最大桁数).value))
   If Cells(i, col_no.最小値).value <> "" Then Call push_array(data, indent(1) & to_yaml("minimum", Cells(i, col_no.最小値).value))
   If Cells(i, col_no.最大値).value <> "" Then Call push_array(data, indent(1) & to_yaml("maximum", Cells(i, col_no.最大値).value))
-  If Cells(i, col_no.最小値含).value <> "" Then Call push_array(data, indent(1) & "exclusiveMinimum: true")
-  If Cells(i, col_no.最大値含).value <> "" Then Call push_array(data, indent(1) & "exclusiveMaximum: true")
   If Cells(i, col_no.ドメイン).value = "区分値" Then
     Call push_array(data, indent(1) & "enum:")
     Call segments.api_value(data, Cells(i, col_no.項目名J).value, indent(2) & "- ")
@@ -494,7 +490,7 @@ End Sub
 Public Sub out_view(ByVal line_sep As Integer)
   Dim data() As String, elm As Range, i As Long
   
-  Call push_array(data, array2tabstr("名称(JP)", "名称(EN)", "ドメイン", "API(type)", "API(format)", "正規表現", "最小桁数", "最大桁数", "最小値", "最小値含む", "最大値", "最大値含む", "API(example)", "説明"))
+  Call push_array(data, array2tabstr("名称(JP)", "名称(EN)", "ドメイン", "正規表現", "最小桁数", "最大桁数", "最小値", "最大値", "API(example)", "説明"))
   
   For Each elm In UsedRange.Resize(, 1).Offset(1)
     If elm.value <> "" Then
@@ -503,15 +499,11 @@ Public Sub out_view(ByVal line_sep As Integer)
         Cells(i, col_no.項目名J).value, _
         Cells(i, col_no.項目名EC).value, _
         Cells(i, col_no.ドメイン).value, _
-        Cells(i, col_no.API型1).value, _
-        Cells(i, col_no.API型2).value, _
         Cells(i, col_no.正規表現).value, _
         Cells(i, col_no.最小桁数).value, _
         Cells(i, col_no.最大桁数).value, _
         Cells(i, col_no.最小値).value, _
-        change_boundary(Cells(i, col_no.最小値含).value), _
         Cells(i, col_no.最大値).value, _
-        change_boundary(Cells(i, col_no.最大値含).value), _
         Cells(i, col_no.API例).value, _
         Cells(i, col_no.説明).value & " "))
     End If
@@ -519,10 +511,6 @@ Public Sub out_view(ByVal line_sep As Integer)
   
   Call text_io.plain_out(Config.VIEW_ELEMENTS, data, line_sep)
 End Sub
-
-Private Function change_boundary(ByVal val As Variant) As Variant
-  If val = 1 Then change_boundary = "含" Else change_boundary = "-"
-End Function
 
 'DB制約文字列を構成
 Private Function db_constraint(Target As Range, field_name As String) As String
@@ -534,10 +522,8 @@ Private Function db_constraint(Target As Range, field_name As String) As String
   ElseIf Target.Offset(, 5).value <> "" Then '最低文字列長の場合
     db_constraint = "(LENGTH(" & field_name & ") >= " & Target.Offset(, 5).value & ")"
   
-  ElseIf Target.Offset(, 7).value <> "" Then '数値範囲の場合
-    If Target.Offset(, 8).value = 1 Then le = " >= " Else le = " > "
-    If Target.Offset(, 10).value = 1 Then ge = " <= " Else ge = " < "
-    db_constraint = "(" & field_name & le & Target.Offset(, 7).value & " AND " & field_name & ge & Target.Offset(, 9).value & ")"
+  ElseIf Target.Offset(, 7).value <> "" Then  '数値範囲の場合
+    db_constraint = "(" & Target.Offset(, 7).value & " <= " & field_name & " AND " & field_name & " <= " & Target.Offset(, 9).value & ")"
   
   Else
     db_constraint = ""

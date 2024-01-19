@@ -13,8 +13,6 @@ price:
   type: integer
   minimum: 0
   maximum: 99999
-  exclusiveMinimum: true
-  exclusiveMaximum: true
   description: 円、希望小売価格
   example: 14000
 
@@ -24,7 +22,6 @@ up:
   type: number
   minimum: 0
   maximum: 1000
-  exclusiveMaximum: true
   description: 仕入れ先からの購入価格
   example: 250.25
 
@@ -90,8 +87,6 @@ quantity:
   type: integer
   minimum: 0
   maximum: 99999
-  exclusiveMinimum: true
-  exclusiveMaximum: true
   description: 数量
   example: 30
 
@@ -166,8 +161,6 @@ profitRate:
   type: number
   minimum: -10
   maximum: 10
-  exclusiveMinimum: true
-  exclusiveMaximum: true
   description: 利益率
   example: 0.324
 
