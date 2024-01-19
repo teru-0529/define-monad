@@ -121,7 +121,7 @@ userId:
   minLength: 4
   maxLength: 4
   description: システム利用ユーザー
-  example: '0001'
+  example: 'A032'
 
 # 商品名称
 # : 取扱商品名

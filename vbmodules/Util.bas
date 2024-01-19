@@ -151,7 +151,7 @@ End Function
 
 'デフォルト値が文字列かどうか
 Public Function is_string_default(ByVal val As String) As String
-  If val = "NO" Or val = "区分値" Or val = "コード値" Or val = "文字列" Or val = "テキスト" Then
+  If val = "NOKEY" Or val = "区分値" Or val = "コード値" Or val = "文字列" Or val = "テキスト" Then
     is_string_default = "true"
   Else
     is_string_default = "false"

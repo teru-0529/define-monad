@@ -3,7 +3,7 @@ version: 3.0.0
 elements:
   - name_jp: 商品No
     name_en: productNo
-    domain: NO
+    domain: NOKEY
     reg_ex: null
     min_digits: 9
     max_digits: 10
@@ -103,7 +103,7 @@ elements:
     description: 数量
   - name_jp: 受注No
     name_en: receivedOrderNo
-    domain: NO
+    domain: NOKEY
     reg_ex: null
     min_digits: 10
     max_digits: 10
@@ -133,13 +133,13 @@ elements:
     description: 業務担当者
   - name_jp: ユーザーID
     name_en: userId
-    domain: NO
+    domain: NOKEY
     reg_ex: null
     min_digits: 4
     max_digits: 4
     min_value: null
     max_value: null
-    example: 0001
+    example: A032
     description: システム利用ユーザー
   - name_jp: 商品名称
     name_en: productName
@@ -153,7 +153,7 @@ elements:
     description: 取扱商品名
   - name_jp: 得意先ID
     name_en: customerId
-    domain: NO
+    domain: NOKEY
     reg_ex: null
     min_digits: 3
     max_digits: 3
