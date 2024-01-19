@@ -19,16 +19,16 @@ Private Enum col_no
   最小桁数 = 6
   最大桁数 = 7
   最小値 = 8
-  最小値含 = 9
-  最大値 = 10
-  最大値含 = 11
-  API例 = 12
-  説明 = 13
-  API型1 = 14
-  API型2 = 15
-  種類数 = 16
-  区分値数 = 17
+  最大値 = 9
+  API例 = 10
+  説明 = 11
+  API型1 = 12
+  API型2 = 13
+  種類数 = 14
+  区分値数 = 15
 End Enum
+
+Const MAX_COL = 15
 
 'デコレーション種類
 Private Enum decoration_type
@@ -46,10 +46,6 @@ Private Type decolation_cells
   dec_type As decoration_type
   reqired As Boolean
 End Type
-  
-  
-Const MAX_COL = 17
-
 
 Dim val As Variant '変更前の仮値
 
@@ -132,16 +128,12 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
 
   '関数
   Cells(start_row, col_no.項目名ES).Resize(f_rows).Formula = "=camel2snake(RC[-1])"
-  Cells(start_row, col_no.API型1).Resize(f_rows).Formula = "=iferror(vlookup(RC[-10],ドメインタイプDATA,6,False)&"""","""")"
-  Cells(start_row, col_no.API型2).Resize(f_rows).Formula = "=iferror(vlookup(RC[-11],ドメインタイプDATA,7,False)&"""","""")"
-  Cells(start_row, col_no.種類数).Resize(f_rows).Formula = "=countif(派生元項目KEY,RC[-15])"
-  Cells(start_row, col_no.区分値数).Resize(f_rows).Formula = "=countif(区分値項目KEY,RC[-16])"
-  
-  '位置
-  Union(Cells(start_row, col_no.最小値含).Resize(f_rows), Cells(start_row, col_no.最大値含).Resize(f_rows)).HorizontalAlignment = xlCenter
+  Cells(start_row, col_no.API型1).Resize(f_rows).Formula = "=iferror(vlookup(RC[-8],ドメインタイプDATA,6,False)&"""","""")"
+  Cells(start_row, col_no.API型2).Resize(f_rows).Formula = "=iferror(vlookup(RC[-9],ドメインタイプDATA,7,False)&"""","""")"
+  Cells(start_row, col_no.種類数).Resize(f_rows).Formula = "=countif(派生元項目KEY,RC[-13])"
+  Cells(start_row, col_no.区分値数).Resize(f_rows).Formula = "=countif(区分値項目KEY,RC[-14])"
 
   '表示形式
-  Union(Cells(start_row, col_no.最小値含).Resize(f_rows), Cells(start_row, col_no.最大値含).Resize(f_rows)).NumberFormatLocal = """含"";;;"
   Cells(start_row, col_no.API例).Resize(f_rows).NumberFormatLocal = "@"
   Union(Cells(start_row, col_no.種類数).Resize(f_rows), Cells(start_row, col_no.区分値数).Resize(f_rows)).NumberFormatLocal = "0_;;;"
 
@@ -183,7 +175,7 @@ Private Sub format_domain_type(ByVal Target As Range, ByVal is_reset As Boolean)
   Dim dec As Integer
   
   '初期化（値リセット）
-  If is_reset Then Target.Offset(, 1).Resize(, 7).ClearContents
+  If is_reset Then Target.Offset(, 1).Resize(, 5).ClearContents
   
   '行ごとにフォーマット対照を選別
   For Each elm In Target
@@ -224,10 +216,8 @@ Private Sub format_domain_type(ByVal Target As Range, ByVal is_reset As Boolean)
     If dec > 0 Then
       Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最小値))
       Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最大値))
-      Set bool.dec_range = Util.union_range(bool.dec_range, Cells(i, col_no.最小値含))
-      Set bool.dec_range = Util.union_range(bool.dec_range, Cells(i, col_no.最大値含))
     ElseIf dec < 0 Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最小値).Resize(, 4))
+      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最小値).Resize(, 2))
     End If
         
   Next elm
@@ -341,7 +331,7 @@ Public Sub load_(ByRef data() As String)
   Dim row_length As Long: row_length = (UBound(data) + 1) / PARAMS
   Dim i As Long
   ReDim wk_range_1(row_length - 1, 1)
-  ReDim wk_range_2(row_length - 1, 9)
+  ReDim wk_range_2(row_length - 1, 7)
   
   '描画箇所のフォーマット
   Call init_format(2, row_length)
@@ -355,16 +345,14 @@ Public Sub load_(ByRef data() As String)
     wk_range_2(i, 2) = from_yaml(data(i * PARAMS + 4))  '最小桁数
     wk_range_2(i, 3) = from_yaml(data(i * PARAMS + 5))  '最大桁数
     wk_range_2(i, 4) = from_yaml(data(i * PARAMS + 6))  '最小値
-    wk_range_2(i, 5) = 0 '最小値含む
-    wk_range_2(i, 6) = from_yaml(data(i * PARAMS + 7))  '最大値
-    wk_range_2(i, 7) = 0 '最大値含む
-    wk_range_2(i, 8) = from_yaml(data(i * PARAMS + 8))  '例
-    wk_range_2(i, 9) = from_yaml(data(i * PARAMS + 9))  '説明
+    wk_range_2(i, 5) = from_yaml(data(i * PARAMS + 7))  '最大値
+    wk_range_2(i, 6) = from_yaml(data(i * PARAMS + 8))  '例
+    wk_range_2(i, 7) = from_yaml(data(i * PARAMS + 9))  '説明
   Next i
   
   '値セット
   Cells(2, col_no.項目名J).Resize(row_length, 2) = wk_range_1
-  Cells(2, col_no.ドメイン).Resize(row_length, 10) = wk_range_2
+  Cells(2, col_no.ドメイン).Resize(row_length, 8) = wk_range_2
   
   'format
   Call format_domain_type(Cells(2, col_no.ドメイン).Resize(row_length), False)
@@ -515,15 +503,16 @@ End Sub
 'DB制約文字列を構成
 Private Function db_constraint(Target As Range, field_name As String) As String
   Dim le As String, ge As String
+  Dim i As Long: i = Target.Row
   
-  If Target.Offset(, 4).value <> "" Then '正規表現の場合
-    db_constraint = "(" & field_name & " ~* '" & Target.Offset(, 4).value & "')"
+  If Cells(i, col_no.正規表現).value <> "" Then '正規表現の場合
+    db_constraint = "(" & field_name & " ~* '" & Cells(i, col_no.正規表現).value & "')"
   
-  ElseIf Target.Offset(, 5).value <> "" Then '最低文字列長の場合
-    db_constraint = "(LENGTH(" & field_name & ") >= " & Target.Offset(, 5).value & ")"
+  ElseIf Cells(i, col_no.最小桁数).value <> "" Then '最低文字列長の場合
+    db_constraint = "(LENGTH(" & field_name & ") >= " & Cells(i, col_no.最小桁数).value & ")"
   
-  ElseIf Target.Offset(, 7).value <> "" Then  '数値範囲の場合
-    db_constraint = "(" & Target.Offset(, 7).value & " <= " & field_name & " AND " & field_name & " <= " & Target.Offset(, 9).value & ")"
+  ElseIf Cells(i, col_no.最小値).value <> "" Then  '数値範囲の場合
+    db_constraint = "(" & Cells(i, col_no.最小値).value & " <= " & field_name & " AND " & field_name & " <= " & Cells(i, col_no.最大値).value & ")"
   
   Else
     db_constraint = ""
