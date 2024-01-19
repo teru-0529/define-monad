@@ -82,3 +82,10 @@ https://zenn.dev/harachan/articles/ddea0e7fd3b08f
   * NO（ドメイン）文字列変更（ユーティリティでDB項目のデフォルトに注意）
   * DB制約（列）
   * 最大最小含むの列を削除
+
+yaml書き込みのインデント設定
+https://hashnode.com/post/set-indentation-on-new-golang-yaml-v3-library-ckbrwl63001skn8s1lj3jmtln
+https://qiita.com/greenteabiscuit/items/2887e8d53a65bd12ec1d
+
+yaml書き込み
+https://future-architect.github.io/articles/20220615a/

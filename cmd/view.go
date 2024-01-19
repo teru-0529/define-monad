@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/teru-0529/define-monad/model"
 )
 
 // viewCmd represents the view command
@@ -14,8 +15,17 @@ var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "Generate tsv data for sphinx from savedata.",
 	Long:  "Generate tsv data for sphinx from savedata.",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		monad, err := model.NewSaveData("./testdata/save_data.yaml")
+		if err != nil {
+			return err
+		}
+
+		monad.Write("./monad.yaml")
+		monad.WriteViewElements("./view_elements.tsv")
 		fmt.Println("view called")
+		return nil
 	},
 }
 
