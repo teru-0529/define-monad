@@ -97,7 +97,7 @@ End Sub
 'save_data“Ç
 '// FIXME:ššššRefactering to Backend
 Public Sub load_(ByRef data() As String)
-  Const PARAMS = 5
+  Const PARAMS = 4
   Dim row_length As Long: row_length = (UBound(data) + 1) / PARAMS
   Dim i As Long
   ReDim wk_range_1(row_length - 1, 2)
@@ -140,7 +140,6 @@ Private Sub save_item(ByRef data() As String, ByVal elm As Range)
   Call push_array(data, indent(2) & to_yaml("name_jp", Cells(i, col_no.€–Ú–¼J).value))
   Call push_array(data, indent(2) & to_yaml("name_en", Cells(i, col_no.€–Ú–¼EC).value))
   Call push_array(data, indent(2) & to_yaml("description", Cells(i, col_no.à–¾).value))
-  Call push_array(data, "")
 End Sub
 
 

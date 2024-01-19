@@ -12,8 +12,8 @@ Public Sub load_(ByVal line_sep As Integer)
   data = text_io.plain_in(Config.SAVE_DATA, line_sep)
 
   '区切り文字の行番号
-  s1 = get_sep_no(data, "delive_elements :")
-  s2 = get_sep_no(data, "segments :")
+  s1 = get_sep_no(data, "delive_elements:")
+  s2 = get_sep_no(data, "segments:")
   
   'elements入力
   For i = 3 To (s1 - 1)
@@ -56,18 +56,18 @@ End Function
 Public Sub save_(ByVal line_sep As Integer)
   Dim data() As String
 
-  Call push_array(data, "data_type : define_elements")
-  Call push_array(data, "version : " & Config.getVersion())
+  Call push_array(data, "data_type: define_elements")
+  Call push_array(data, "version: " & Config.getVersion())
 
-  Call push_array(data, "elements :")
+  Call push_array(data, "elements:")
   'elements出力
   Call elements.save_(data)
   
-  Call push_array(data, "delive_elements :")
+  Call push_array(data, "delive_elements:")
   'delive_elements出力
   Call derive_elements.save_(data)
   
-  Call push_array(data, "segments :")
+  Call push_array(data, "segments:")
   'segments出力
   Call segments.save_(data)
   

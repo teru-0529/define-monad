@@ -14,8 +14,8 @@ var outputFile string
 // saveCmd represents the save command
 var saveCmd = &cobra.Command{
 	Use:   "save",
-	Short: "set data from excel sheet and write yaml data.",
-	Long:  "set data from excel sheet and write yaml data.",
+	Short: "Get savedata from excel sheet and write yaml.",
+	Long:  "Get savedata from excel sheet and write yaml.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(outputFile)
 		fmt.Println("save called")

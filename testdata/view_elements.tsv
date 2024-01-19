@@ -1,24 +1,24 @@
-名称(JP)	名称(EN)	ドメイン	API(type)	API(format)	正規表現	最小桁数	最大桁数	最小値	最小値含む	最大値	最大値含む	API(example)	説明
-商品No	productNo	NO	string			9	10		-		-	AAA000001	商品特定のユニークキー 
-定価	price	整数	integer					0	含	99999	含	14000	円、希望小売価格 
-UP	up	実数	number					0	-	1000	含	250.25	仕入れ先からの購入価格 
-登録日	registrationDate	日付	string	date					-		-	2022-12-31	登録日 
-商品区分	productKbn	区分値	string						-		-	NORMAL	商品の状態を表す区分 
-コメント	comment	テキスト	string			10			-		-	制御用装置	コメント 
-更新可能	canUpdate	可否/フラグ	boolean						-		-	false	更新可否 
-部署	department	区分値	string						-		-	ORDERING	部署 
-受注日	orderDate	日付	string	date					-		-	2022-12-31	受注日 
-数量	quantity	整数	integer					0	含	99999	含	30	数量 
-受注No	receivedOrderNo	NO	string			10	10		-		-	RO-0000001	受注番号 
-受注連番	orderDetailNo	ID	integer						-		-	1051	受注明細番号 
-担当者名	personInCharge	文字列	string				30		-		-	織田信長	業務担当者 
-ユーザーID	userId	NO	string			4	4		-		-	0001	システム利用ユーザー 
-商品名称	productName	文字列	string				100		-		-	日本刀	取扱商品名 
-得意先ID	customerId	NO	string			3	3		-		-	A01	得意先のID 
-得意先	customerName	文字列	string				100		-		-	徳川物産	得意先の名称 
-稼働中	isWorking	可否/フラグ	boolean						-		-	true	稼働状況 
-利益率	profitRate	実数	number					-10	含	10	含	0.324	利益率 
-帳票未表示	excludeReport	可否/フラグ	boolean						-		-	true	帳票などに出力しない場合にtrue 
-発送時間	shippingTime	時間	string		^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$				-		-	14:00	出荷時間 
-取引有無	isActiveCustomer	可否/フラグ	boolean						-		-	true	取引中かどうか 
-取引先区分	customerType	区分値	string						-		-	STANDARD	取引先の区分 
+名称(JP)	名称(EN)	ドメイン	正規表現	最小桁数	最大桁数	最小値	最大値	API(example)	説明
+商品No	productNo	NOKEY		9	10			AAA000001	商品特定のユニークキー 
+定価	price	整数				0	99999	14000	円、希望小売価格 
+UP	up	実数				0	1000	250.25	仕入れ先からの購入価格 
+登録日	registrationDate	日付						2022-12-31	登録日 
+商品区分	productKbn	区分値						NORMAL	商品の状態を表す区分 
+コメント	comment	テキスト		10				制御用装置	コメント 
+更新可能	canUpdate	可否/フラグ						false	更新可否 
+部署	department	区分値						ORDERING	部署 
+受注日	orderDate	日付						2022-12-31	受注日 
+数量	quantity	整数				0	99999	30	数量 
+受注No	receivedOrderNo	NOKEY		10	10			RO-0000001	受注番号 
+受注連番	orderDetailNo	ID						1051	受注明細番号 
+担当者名	personInCharge	文字列			30			織田信長	業務担当者 
+ユーザーID	userId	NOKEY		4	4			A032	システム利用ユーザー 
+商品名称	productName	文字列			100			日本刀	取扱商品名 
+得意先ID	customerId	NOKEY		3	3			A01	得意先のID 
+得意先	customerName	文字列			100			徳川物産	得意先の名称 
+稼働中	isWorking	可否/フラグ						true	稼働状況 
+利益率	profitRate	実数				-10	10	0.324	利益率 
+帳票未表示	excludeReport	可否/フラグ						true	帳票などに出力しない場合にtrue 
+発送時間	shippingTime	時間	^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$					14:00	出荷時間 
+取引有無	isActiveCustomer	可否/フラグ						true	取引中かどうか 
+取引先区分	customerType	区分値						STANDARD	取引先の区分 
