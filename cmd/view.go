@@ -22,7 +22,13 @@ var viewCmd = &cobra.Command{
 			return err
 		}
 
-		monad.Write("./monad.yaml")
+		//FIXME:確認用、後で消す
+		err = monad.Write("./monad.yaml")
+		if err != nil {
+			return err
+		}
+		//FIXME:確認用、後で消す
+
 		monad.WriteViewElements("./view_elements.tsv")
 		fmt.Println("view called")
 		return nil

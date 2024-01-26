@@ -22,3 +22,5 @@ UP	up	実数				0	1000	250.25	仕入れ先からの購入価格
 発送時間	shippingTime	時間	^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$					14:00	出荷時間 
 取引有無	isActiveCustomer	可否/フラグ						true	取引中かどうか 
 取引先区分	customerType	区分値						STANDARD	取引先の区分 
+承認日時	approveDatetime	日時						2024-01-01T11:07:31	承認した日時 
+社員番号	emploeeNo	NOKEY		4	4			0012	社員番号 

@@ -346,7 +346,7 @@ Public Sub load_(ByRef data() As String)
     wk_range_2(i, 3) = from_yaml(data(i * PARAMS + 5))  '最大桁数
     wk_range_2(i, 4) = from_yaml(data(i * PARAMS + 6))  '最小値
     wk_range_2(i, 5) = from_yaml(data(i * PARAMS + 7))  '最大値
-    wk_range_2(i, 6) = from_yaml(data(i * PARAMS + 8))  '例
+    wk_range_2(i, 6) = exampleValueFrom(from_yaml(data(i * PARAMS + 8)), from_yaml(data(i * PARAMS + 2)))       '例
     wk_range_2(i, 7) = from_yaml(data(i * PARAMS + 9))  '説明
   Next i
   
@@ -359,6 +359,21 @@ Public Sub load_(ByRef data() As String)
  
 End Sub
 
+'Exampleが文字列かどうか
+Function exampleValueFrom(ByVal val As Variant, ByVal domain As String) As Variant
+  Dim length As Integer
+  
+  If domain = "日付" Or domain = "時間" Or (domain = "NOKEY" And val Like """[0-9]*""") Then
+    length = Len(val)
+    If Left(val, 1) = """" And Right(val, 1) = """" Then
+      exampleValueFrom = Mid(val, 2, length - 2)
+    Else
+      exampleValueFrom = val
+    End If
+  Else
+    exampleValueFrom = val
+  End If
+End Function
 
 'save_data書込
 '// FIXME:★★★★Refactering to Backend
@@ -383,10 +398,19 @@ Private Sub save_item(ByRef data() As String, ByVal elm As Range)
   Call push_array(data, indent(2) & to_yaml("max_digits", Cells(i, col_no.最大桁数).value))
   Call push_array(data, indent(2) & to_yaml("min_value", Cells(i, col_no.最小値).value))
   Call push_array(data, indent(2) & to_yaml("max_value", Cells(i, col_no.最大値).value))
-  Call push_array(data, indent(2) & to_yaml("example", Cells(i, col_no.API例).value))
+  Call push_array(data, indent(2) & to_yaml("example", exampleValueTo(Cells(i, col_no.API例).value, Cells(i, col_no.ドメイン).value)))
   Call push_array(data, indent(2) & to_yaml("description", Cells(i, col_no.説明).value))
 End Sub
 
+'Exampleが文字列かどうか
+Function exampleValueTo(ByVal val As Variant, ByVal domain As String) As Variant
+  If domain = "日付" Or domain = "時間" Or (domain = "NOKEY" And val Like "[0-9]*") Then
+    exampleValueTo = """" & val & """"
+  Else
+    exampleValueTo = val
+  End If
+
+End Function
 
 'table_elements書込
 Public Sub out_table(ByRef data() As String)

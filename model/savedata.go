@@ -1,10 +1,10 @@
 package model
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 
 	"github.com/samber/lo"
@@ -32,8 +32,6 @@ type Element struct {
 	Example     string  `yaml:"example"`
 	Description string  `yaml:"description"`
 }
-
-// Example     interface{} `yaml:"example"`
 
 type DeliveElement struct {
 	Origin      string `yaml:"origin"`
@@ -69,14 +67,6 @@ func NewSaveData(path string) (*SaveData, error) {
 
 // yamlファイルの書き込み
 func (savedata *SaveData) Write(path string) error {
-	// INFO: encode
-	var buffer bytes.Buffer
-	yamlEncoder := yaml.NewEncoder(&buffer)
-	yamlEncoder.SetIndent(2) // this is what you're looking for
-	err := yamlEncoder.Encode(&savedata)
-	if err != nil {
-		return err
-	}
 
 	// INFO: create-directory
 	dir := filepath.Dir(path)
@@ -85,11 +75,18 @@ func (savedata *SaveData) Write(path string) error {
 			return fmt.Errorf("cannot create directory: %s", err.Error())
 		}
 	}
-
-	// INFO: write-file
-	_, err = buffer.WriteString(path)
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
-		return fmt.Errorf("cannot write file: %s", err.Error())
+		return fmt.Errorf("cannot create file: %s", err.Error())
+	}
+	defer file.Close()
+
+	// INFO: encode
+	yamlEncoder := yaml.NewEncoder(file)
+	yamlEncoder.SetIndent(2) // this is what you're looking for
+	err = yamlEncoder.Encode(&savedata)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -129,11 +126,108 @@ func (savedata *SaveData) WriteViewElements(path string) error {
 	return nil
 }
 
-// func (element *Element) MarshalYAML() (interface{}, error) {
-// 	fmt.Println(element.Example)
-
-// 	return element.Example, nil
-// }
+func (element Element) MarshalYAML() (interface{}, error) {
+	if element.Domain == "可否/フラグ" {
+		example, _ := strconv.ParseBool(element.Example)
+		return struct {
+			NameJp      string  `yaml:"name_jp"`
+			NameEn      string  `yaml:"name_en"`
+			Domain      string  `yaml:"domain"`
+			RegEx       *string `yaml:"reg_ex"`
+			MinDigits   *int    `yaml:"min_digits"`
+			MaxDigits   *int    `yaml:"max_digits"`
+			MinValue    *int    `yaml:"min_value"`
+			Maxvalue    *int    `yaml:"max_value"`
+			Example     bool    `yaml:"example"`
+			Description string  `yaml:"description"`
+		}{
+			NameJp:      element.NameJp,
+			NameEn:      element.NameEn,
+			Domain:      element.Domain,
+			RegEx:       element.RegEx,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			Maxvalue:    element.Maxvalue,
+			Example:     example,
+			Description: element.Description,
+		}, nil
+	} else if slices.Contains([]string{"整数", "ID"}, element.Domain) {
+		example, _ := strconv.ParseInt(element.Example, 10, 64)
+		return struct {
+			NameJp      string  `yaml:"name_jp"`
+			NameEn      string  `yaml:"name_en"`
+			Domain      string  `yaml:"domain"`
+			RegEx       *string `yaml:"reg_ex"`
+			MinDigits   *int    `yaml:"min_digits"`
+			MaxDigits   *int    `yaml:"max_digits"`
+			MinValue    *int    `yaml:"min_value"`
+			Maxvalue    *int    `yaml:"max_value"`
+			Example     int64   `yaml:"example"`
+			Description string  `yaml:"description"`
+		}{
+			NameJp:      element.NameJp,
+			NameEn:      element.NameEn,
+			Domain:      element.Domain,
+			RegEx:       element.RegEx,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			Maxvalue:    element.Maxvalue,
+			Example:     example,
+			Description: element.Description,
+		}, nil
+	} else if slices.Contains([]string{"実数"}, element.Domain) {
+		example, _ := strconv.ParseFloat(element.Example, 64)
+		return struct {
+			NameJp      string  `yaml:"name_jp"`
+			NameEn      string  `yaml:"name_en"`
+			Domain      string  `yaml:"domain"`
+			RegEx       *string `yaml:"reg_ex"`
+			MinDigits   *int    `yaml:"min_digits"`
+			MaxDigits   *int    `yaml:"max_digits"`
+			MinValue    *int    `yaml:"min_value"`
+			Maxvalue    *int    `yaml:"max_value"`
+			Example     float64 `yaml:"example"`
+			Description string  `yaml:"description"`
+		}{
+			NameJp:      element.NameJp,
+			NameEn:      element.NameEn,
+			Domain:      element.Domain,
+			RegEx:       element.RegEx,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			Maxvalue:    element.Maxvalue,
+			Example:     example,
+			Description: element.Description,
+		}, nil
+	} else {
+		return struct {
+			NameJp      string  `yaml:"name_jp"`
+			NameEn      string  `yaml:"name_en"`
+			Domain      string  `yaml:"domain"`
+			RegEx       *string `yaml:"reg_ex"`
+			MinDigits   *int    `yaml:"min_digits"`
+			MaxDigits   *int    `yaml:"max_digits"`
+			MinValue    *int    `yaml:"min_value"`
+			Maxvalue    *int    `yaml:"max_value"`
+			Example     string  `yaml:"example"`
+			Description string  `yaml:"description"`
+		}{
+			NameJp:      element.NameJp,
+			NameEn:      element.NameEn,
+			Domain:      element.Domain,
+			RegEx:       element.RegEx,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			Maxvalue:    element.Maxvalue,
+			Example:     element.Example,
+			Description: element.Description,
+		}, nil
+	}
+}
 
 func (element *Element) toArray() []string {
 	return []string{
@@ -152,15 +246,6 @@ func (element *Element) toArray() []string {
 		element.Description,
 	}
 }
-
-// func (element *Element) toExampleStr() string {
-// 	res, err := gats.ToString(element.Example)
-// 	if err != nil {
-// 		return ""
-// 	} else {
-// 		return res
-// 	}
-// }
 
 func toIntStr(val *int) string {
 	return lo.TernaryF(
