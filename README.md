@@ -91,3 +91,6 @@ yaml書き込み
 https://future-architect.github.io/articles/20220615a/
 
 https://github.com/go-yaml/yaml/issues/672
+
+入力値のバリデーション
+https://qiita.com/tkit/items/3cdeafcde2bd98612428

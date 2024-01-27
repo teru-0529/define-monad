@@ -1,0 +1,66 @@
+/*
+Copyright © 2024 Teruaki Sato <andrea.pirlo.0529@gmail.com>
+*/
+package cmd
+
+import (
+	"fmt"
+	"slices"
+
+	"github.com/spf13/cobra"
+	"github.com/teru-0529/define-monad/model"
+)
+
+type OutType string
+
+var (
+	TYPE_DDL    OutType = "type-ddl"
+	API_ELEMENT OutType = "api-element"
+	DB_ELEMENT  OutType = "db-element"
+)
+
+var distTypeStr string
+var distFile string
+
+// outputCmd represents the output command
+var outputCmd = &cobra.Command{
+	Use:   "output",
+	Short: "output file in each format from savedata.",
+	Long:  "output file in each format from savedata.",
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		// INFO: 出力タイプが想定された種類ではない場合エラーを返す
+		var distType OutType = OutType(distTypeStr)
+		if !slices.Contains([]OutType{TYPE_DDL, API_ELEMENT, DB_ELEMENT}, distType) {
+			return fmt.Errorf("input `dist-type` is not found: [%s]", distTypeStr)
+		}
+
+		// INFO: save-dataの読込み
+		_, err := model.NewSaveData(savedataPath)
+		if err != nil {
+			return err
+		}
+
+		if distType == TYPE_DDL {
+			fmt.Println("DDL create")
+
+		} else if distType == API_ELEMENT {
+			fmt.Println("API create")
+
+		} else if distType == DB_ELEMENT {
+			fmt.Println("element create")
+
+		}
+
+		fmt.Println("output command completed.")
+		return nil
+	},
+}
+
+func init() {
+	outputCmd.Flags().StringVarP(&distTypeStr, "dist-type", "T", "", "output file type(one of 'type-ddl','api-element','db-element')")
+	outputCmd.Flags().StringVarP(&distFile, "dist-file", "F", "", "output file name")
+
+	outputCmd.MarkFlagRequired("dist-type")
+	outputCmd.MarkFlagRequired("dist-file")
+}
