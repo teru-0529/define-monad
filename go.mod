@@ -3,7 +3,6 @@ module github.com/teru-0529/define-monad
 go 1.21.5
 
 require (
-	github.com/harakeishi/gats v0.0.0-20230219034858-055bc915842a
 	github.com/samber/lo v1.39.0
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2

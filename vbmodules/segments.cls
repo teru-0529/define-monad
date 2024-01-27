@@ -172,24 +172,3 @@ Public Sub ddl_value(ByRef data() As String, ByVal name As String, ByVal indent 
   Call push_array(data, wk(UBound(wk)))
   
 End Sub
-
-
-'segments.tsv(表示用)出力
-Public Sub out_view(ByVal line_sep As Integer)
-  Dim data() As String, elm As Range, i As Long
-  
-  Call push_array(data, array2tabstr("項目名", "区分値", "区分名", "説明"))
-  
-  For Each elm In UsedRange.Resize(, 1).Offset(1)
-    If elm.value <> "" Then
-      i = elm.Row
-      Call push_array(data, array2tabstr( _
-        Cells(i, col_no.項目名J).value, _
-        Cells(i, col_no.区分値).value, _
-        Cells(i, col_no.区分名).value, _
-        Cells(i, col_no.説明).value & " "))
-    End If
-  Next elm
-  
-  Call text_io.plain_out(Config.VIEW_SEGMENTS, data, line_sep)
-End Sub

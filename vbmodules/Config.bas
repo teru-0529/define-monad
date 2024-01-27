@@ -21,9 +21,7 @@ Public TABLE_ELEMENTS As String
 Public API_ELEMENTS As String
 Public TYPES_DDL As String
 
-Public VIEW_ELEMENTS As String
-Public VIEW_DERIVE_ELEMENTS As String
-Public VIEW_SEGMENTS As String
+Public VIEW_DIR As String
 
 '// バージョン情報取得（Full）
 Public Function getFullVersion() As String
@@ -56,14 +54,8 @@ Public Sub init(ByVal iniFile As String)
   TYPES_DDL = getIniValue("Path", "typesDDL", iniPath)
   Debug.Print "[config] TYPES_DDL: " & TYPES_DDL
 
-  VIEW_ELEMENTS = getIniValue("Path", "viewElements", iniPath)
-  Debug.Print "[config] VIEW_ELEMENTS: " & VIEW_ELEMENTS
-
-  VIEW_DERIVE_ELEMENTS = getIniValue("Path", "viewDeriveElements", iniPath)
-  Debug.Print "[config] VIEW_ELEMENTS: " & VIEW_DERIVE_ELEMENTS
-
-  VIEW_SEGMENTS = getIniValue("Path", "viewSegments", iniPath)
-  Debug.Print "[config] VIEW_SEGMENTS: " & VIEW_SEGMENTS
+  VIEW_DIR = getIniValue("Path", "viewDir", iniPath)
+  Debug.Print "[config] VIEW_DIR: " & VIEW_DIR
 
   Set FSO = Nothing
   Call Util.showTime(Timer - startTime)
@@ -77,7 +69,7 @@ Private Function getIniValue(ByVal base As String, ByVal key As String, ByVal pa
   Call GetPrivateProfileString(base, key, "N/A", temp, TEMP_LENGTH, path)
   getIniValue = Trim(Left(temp, InStr(temp, vbNullChar) - 1))
 
-  '// TODO:暫定的に絶対パス
+  '// 絶対パスを取得
   getIniValue = CreateObject("Scripting.FileSystemObject").BuildPath(ThisWorkbook.path, getIniValue)
 End Function
 

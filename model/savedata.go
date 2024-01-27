@@ -1,10 +1,10 @@
 package model
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 
 	"github.com/samber/lo"
@@ -12,18 +12,37 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type Dom string
+
+var (
+	UUID     Dom = "UUID"
+	NOKEY    Dom = "NOKEY"
+	ID       Dom = "ID"
+	ENUM     Dom = "区分値"
+	CODE     Dom = "コード値"
+	BOOL     Dom = "可否/フラグ"
+	DATETIME Dom = "日時"
+	DATE     Dom = "日付"
+	TIME     Dom = "時間"
+	INTEGER  Dom = "整数"
+	NUMBER   Dom = "実数"
+	STRING   Dom = "文字列"
+	TEXT     Dom = "テキスト"
+)
+
 type SaveData struct {
-	DataType       string          `yaml:"data_type"`
-	Version        string          `yaml:"version"`
-	Elements       []Element       `yaml:"elements"`
-	DeliveElements []DeliveElement `yaml:"delive_elements"`
-	Segments       []Segment       `yaml:"segments"`
+	DataType       string            `yaml:"data_type"`
+	Version        string            `yaml:"version"`
+	Elements       []Element         `yaml:"elements"`
+	DeliveElements []DeliveElement   `yaml:"delive_elements"`
+	Segments       []Segment         `yaml:"segments"`
+	elementMap     map[string]string //Element.NameJp → Element.NameEn のマップ
 }
 
 type Element struct {
 	NameJp      string  `yaml:"name_jp"`
 	NameEn      string  `yaml:"name_en"`
-	Domain      string  `yaml:"domain"`
+	Domain      Dom     `yaml:"domain"`
 	RegEx       *string `yaml:"reg_ex"`
 	MinDigits   *int    `yaml:"min_digits"`
 	MaxDigits   *int    `yaml:"max_digits"`
@@ -32,8 +51,6 @@ type Element struct {
 	Example     string  `yaml:"example"`
 	Description string  `yaml:"description"`
 }
-
-// Example     interface{} `yaml:"example"`
 
 type DeliveElement struct {
 	Origin      string `yaml:"origin"`
@@ -63,20 +80,19 @@ func NewSaveData(path string) (*SaveData, error) {
 		return nil, err
 	}
 
+	// INFO: create elementmap
+	m := map[string]string{}
+	for _, elements := range savedata.Elements {
+		m[elements.NameJp] = elements.NameEn
+	}
+	savedata.elementMap = m
+
 	// fmt.Println(savedata) WARNING:
 	return &savedata, nil
 }
 
 // yamlファイルの書き込み
 func (savedata *SaveData) Write(path string) error {
-	// INFO: encode
-	var buffer bytes.Buffer
-	yamlEncoder := yaml.NewEncoder(&buffer)
-	yamlEncoder.SetIndent(2) // this is what you're looking for
-	err := yamlEncoder.Encode(&savedata)
-	if err != nil {
-		return err
-	}
 
 	// INFO: create-directory
 	dir := filepath.Dir(path)
@@ -85,17 +101,127 @@ func (savedata *SaveData) Write(path string) error {
 			return fmt.Errorf("cannot create directory: %s", err.Error())
 		}
 	}
-
-	// INFO: write-file
-	_, err = buffer.WriteString(path)
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
 	if err != nil {
-		return fmt.Errorf("cannot write file: %s", err.Error())
+		return fmt.Errorf("cannot create file: %s", err.Error())
+	}
+	defer file.Close()
+
+	// INFO: encode
+	yamlEncoder := yaml.NewEncoder(file)
+	yamlEncoder.SetIndent(2) // this is what you're looking for
+	err = yamlEncoder.Encode(&savedata)
+	if err != nil {
+		return err
 	}
 
 	return nil
 }
 
-// yamlファイルの書き込み
+func (element Element) MarshalYAML() (interface{}, error) {
+	if element.Domain == BOOL {
+		example, _ := strconv.ParseBool(element.Example)
+		return struct {
+			NameJp      string  `yaml:"name_jp"`
+			NameEn      string  `yaml:"name_en"`
+			Domain      Dom     `yaml:"domain"`
+			RegEx       *string `yaml:"reg_ex"`
+			MinDigits   *int    `yaml:"min_digits"`
+			MaxDigits   *int    `yaml:"max_digits"`
+			MinValue    *int    `yaml:"min_value"`
+			Maxvalue    *int    `yaml:"max_value"`
+			Example     bool    `yaml:"example"`
+			Description string  `yaml:"description"`
+		}{
+			NameJp:      element.NameJp,
+			NameEn:      element.NameEn,
+			Domain:      element.Domain,
+			RegEx:       element.RegEx,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			Maxvalue:    element.Maxvalue,
+			Example:     example,
+			Description: element.Description,
+		}, nil
+	} else if slices.Contains([]Dom{INTEGER, ID}, element.Domain) {
+		example, _ := strconv.ParseInt(element.Example, 10, 64)
+		return struct {
+			NameJp      string  `yaml:"name_jp"`
+			NameEn      string  `yaml:"name_en"`
+			Domain      Dom     `yaml:"domain"`
+			RegEx       *string `yaml:"reg_ex"`
+			MinDigits   *int    `yaml:"min_digits"`
+			MaxDigits   *int    `yaml:"max_digits"`
+			MinValue    *int    `yaml:"min_value"`
+			Maxvalue    *int    `yaml:"max_value"`
+			Example     int64   `yaml:"example"`
+			Description string  `yaml:"description"`
+		}{
+			NameJp:      element.NameJp,
+			NameEn:      element.NameEn,
+			Domain:      element.Domain,
+			RegEx:       element.RegEx,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			Maxvalue:    element.Maxvalue,
+			Example:     example,
+			Description: element.Description,
+		}, nil
+	} else if slices.Contains([]Dom{NUMBER}, element.Domain) {
+		example, _ := strconv.ParseFloat(element.Example, 64)
+		return struct {
+			NameJp      string  `yaml:"name_jp"`
+			NameEn      string  `yaml:"name_en"`
+			Domain      Dom     `yaml:"domain"`
+			RegEx       *string `yaml:"reg_ex"`
+			MinDigits   *int    `yaml:"min_digits"`
+			MaxDigits   *int    `yaml:"max_digits"`
+			MinValue    *int    `yaml:"min_value"`
+			Maxvalue    *int    `yaml:"max_value"`
+			Example     float64 `yaml:"example"`
+			Description string  `yaml:"description"`
+		}{
+			NameJp:      element.NameJp,
+			NameEn:      element.NameEn,
+			Domain:      element.Domain,
+			RegEx:       element.RegEx,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			Maxvalue:    element.Maxvalue,
+			Example:     example,
+			Description: element.Description,
+		}, nil
+	} else {
+		return struct {
+			NameJp      string  `yaml:"name_jp"`
+			NameEn      string  `yaml:"name_en"`
+			Domain      Dom     `yaml:"domain"`
+			RegEx       *string `yaml:"reg_ex"`
+			MinDigits   *int    `yaml:"min_digits"`
+			MaxDigits   *int    `yaml:"max_digits"`
+			MinValue    *int    `yaml:"min_value"`
+			Maxvalue    *int    `yaml:"max_value"`
+			Example     string  `yaml:"example"`
+			Description string  `yaml:"description"`
+		}{
+			NameJp:      element.NameJp,
+			NameEn:      element.NameEn,
+			Domain:      element.Domain,
+			RegEx:       element.RegEx,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			Maxvalue:    element.Maxvalue,
+			Example:     element.Example,
+			Description: element.Description,
+		}, nil
+	}
+}
+
+// elements-viewの書き込み
 func (savedata *SaveData) WriteViewElements(path string) error {
 	// INFO: Writerの取得
 	writer, cleanup, err := store.NewWriter(path)
@@ -110,8 +236,6 @@ func (savedata *SaveData) WriteViewElements(path string) error {
 		"名称(JP)",
 		"名称(EN)",
 		"ドメイン",
-		"API(type)",
-		"API(format)",
 		"正規表現",
 		"最小桁数",
 		"最大桁数",
@@ -129,43 +253,99 @@ func (savedata *SaveData) WriteViewElements(path string) error {
 	return nil
 }
 
-// func (element *Element) MarshalYAML() (interface{}, error) {
-// 	fmt.Println(element.Example)
-
-// 	return element.Example, nil
-// }
-
 func (element *Element) toArray() []string {
 	return []string{
 		element.NameJp,
 		element.NameEn,
-		element.Domain,
-		element.Domain,
-		element.Domain,
+		string(element.Domain),
 		lo.Ternary(lo.IsNil(element.RegEx), "", *element.RegEx),
-		toIntStr(element.MinDigits),
-		toIntStr(element.MaxDigits),
-		toIntStr(element.MinValue),
-		toIntStr(element.Maxvalue),
+		int2Str(element.MinDigits),
+		int2Str(element.MaxDigits),
+		int2Str(element.MinValue),
+		int2Str(element.Maxvalue),
 		element.Example,
-		// element.toExampleStr(),
 		element.Description,
 	}
 }
 
-// func (element *Element) toExampleStr() string {
-// 	res, err := gats.ToString(element.Example)
-// 	if err != nil {
-// 		return ""
-// 	} else {
-// 		return res
-// 	}
-// }
-
-func toIntStr(val *int) string {
+func int2Str(val *int) string {
 	return lo.TernaryF(
 		lo.IsNil(val),
 		func() string { return "" },
 		func() string { return strconv.Itoa(*val) },
 	)
+}
+
+// derive-elements-viewの書き込み
+func (savedata *SaveData) WriteViewDeriveElements(path string) error {
+	// INFO: Writerの取得
+	writer, cleanup, err := store.NewWriter(path)
+	if err != nil {
+		return err
+	}
+	defer cleanup()
+
+	// INFO: 書き込み
+	defer writer.Flush() //内部バッファのフラッシュは必須
+	writer.Write([]string{
+		"派生元項目(JP)",
+		"派生元項目(EN)",
+		"名称(JP)",
+		"名称(EN)",
+		"説明",
+	})
+	for _, elements := range savedata.DeliveElements {
+		if err := writer.Write(elements.toArray(savedata.elementMap)); err != nil {
+			return fmt.Errorf("cannot write record: %s", err.Error())
+		}
+	}
+
+	return nil
+}
+
+func (element *DeliveElement) toArray(original map[string]string) []string {
+	return []string{
+		element.Origin,
+		original[element.Origin],
+		element.NameJp,
+		element.NameEn,
+		element.Description,
+	}
+}
+
+// derive-elements-viewの書き込み
+func (savedata *SaveData) WriteViewSegments(path string) error {
+	// INFO: Writerの取得
+	writer, cleanup, err := store.NewWriter(path)
+	if err != nil {
+		return err
+	}
+	defer cleanup()
+
+	// INFO: 書き込み
+	defer writer.Flush() //内部バッファのフラッシュは必須
+	writer.Write([]string{
+		"項目名(JP)",
+		"項目名(EN)",
+		"区分値",
+		"区分値名",
+		"説明",
+	})
+	for _, elements := range savedata.Segments {
+		if err := writer.Write(elements.toArray(savedata.elementMap)); err != nil {
+			return fmt.Errorf("cannot write record: %s", err.Error())
+		}
+	}
+
+	return nil
+}
+
+func (element *Segment) toArray(original map[string]string) []string {
+	return []string{
+		element.Key,
+		original[element.Key],
+		element.Value,
+		element.Name,
+		element.Description,
+	}
 }

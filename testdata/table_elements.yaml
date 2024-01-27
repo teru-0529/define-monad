@@ -228,6 +228,26 @@
   is_origin: true
   origin: null
 
+- name_jp: 承認日時
+  name_en: approve_datetime
+  db_model: timestamp
+  constraint: null
+  must_not_null: false
+  is_string_default: false
+  description: 承認した日時
+  is_origin: true
+  origin: null
+
+- name_jp: 社員番号
+  name_en: emploee_no
+  db_model: varchar(4)
+  constraint: (LENGTH(emploee_no) >= 4)
+  must_not_null: false
+  is_string_default: true
+  description: 社員番号
+  is_origin: true
+  origin: null
+
 - name_jp: キャンペーン定価
   name_en: campane_price
   db_model: integer

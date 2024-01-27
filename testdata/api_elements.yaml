@@ -198,3 +198,20 @@ customerType:
   description: 取引先の区分
   example: 'STANDARD'
 
+# 承認日時
+# : 承認した日時
+approveDatetime:
+  type: string
+  format: date-time
+  description: 承認した日時
+  example: '2024-01-01T11:07:31'
+
+# 社員番号
+# : 社員番号
+emploeeNo:
+  type: string
+  minLength: 4
+  maxLength: 4
+  description: 社員番号
+  example: '0012'
+

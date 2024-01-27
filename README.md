@@ -89,3 +89,5 @@ https://qiita.com/greenteabiscuit/items/2887e8d53a65bd12ec1d
 
 yaml書き込み
 https://future-architect.github.io/articles/20220615a/
+
+https://github.com/go-yaml/yaml/issues/672

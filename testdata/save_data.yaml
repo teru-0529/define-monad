@@ -39,7 +39,7 @@ elements:
     max_digits: null
     min_value: null
     max_value: null
-    example: 2022-12-31
+    example: "2022-12-31"
     description: 登録日
   - name_jp: 商品区分
     name_en: productKbn
@@ -89,7 +89,7 @@ elements:
     max_digits: null
     min_value: null
     max_value: null
-    example: 2022-12-31
+    example: "2022-12-31"
     description: 受注日
   - name_jp: 数量
     name_en: quantity
@@ -209,7 +209,7 @@ elements:
     max_digits: null
     min_value: null
     max_value: null
-    example: 14:00
+    example: "14:00"
     description: 出荷時間
   - name_jp: 取引有無
     name_en: isActiveCustomer
@@ -231,6 +231,26 @@ elements:
     max_value: null
     example: STANDARD
     description: 取引先の区分
+  - name_jp: 承認日時
+    name_en: approveDatetime
+    domain: 日時
+    reg_ex: null
+    min_digits: null
+    max_digits: null
+    min_value: null
+    max_value: null
+    example: 2024-01-01T11:07:31
+    description: 承認した日時
+  - name_jp: 社員番号
+    name_en: emploeeNo
+    domain: NOKEY
+    reg_ex: null
+    min_digits: 4
+    max_digits: 4
+    min_value: null
+    max_value: null
+    example: "0012"
+    description: 社員番号
 delive_elements:
   - origin: 定価
     name_jp: キャンペーン定価
