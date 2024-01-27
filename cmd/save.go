@@ -9,20 +9,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var outputFile string
-
 // saveCmd represents the save command
 var saveCmd = &cobra.Command{
 	Use:   "save",
 	Short: "Get savedata from excel sheet and write yaml.",
 	Long:  "Get savedata from excel sheet and write yaml.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(outputFile)
+		fmt.Println(savedataPath)
 		fmt.Println("save called")
 	},
 }
 
 func init() {
-	// INFO:フラグ値を変数にBind
-	saveCmd.Flags().StringVarP(&outputFile, "out", "O", "./save_data.yaml", "save data path")
 }
