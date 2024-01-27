@@ -82,7 +82,7 @@ func (savedata *SaveData) WriteViewDeriveElements(path string) error {
 		"説明",
 	})
 	for _, elements := range savedata.DeliveElements {
-		if err := writer.Write(elements.toArray(savedata.elementMap)); err != nil {
+		if err := writer.Write(elements.toArray()); err != nil {
 			return fmt.Errorf("cannot write record: %s", err.Error())
 		}
 	}
@@ -90,10 +90,10 @@ func (savedata *SaveData) WriteViewDeriveElements(path string) error {
 	return nil
 }
 
-func (element *DeliveElement) toArray(original map[string]string) []string {
+func (element *DeliveElement) toArray() []string {
 	return []string{
-		element.Origin,
-		original[element.Origin],
+		element.ref.NameJp,
+		element.ref.NameEn,
 		element.NameJp,
 		element.NameEn,
 		element.Description,
@@ -119,7 +119,7 @@ func (savedata *SaveData) WriteViewSegments(path string) error {
 		"説明",
 	})
 	for _, elements := range savedata.Segments {
-		if err := writer.Write(elements.toArray(savedata.elementMap)); err != nil {
+		if err := writer.Write(elements.toArray()); err != nil {
 			return fmt.Errorf("cannot write record: %s", err.Error())
 		}
 	}
@@ -127,10 +127,10 @@ func (savedata *SaveData) WriteViewSegments(path string) error {
 	return nil
 }
 
-func (element *Segment) toArray(original map[string]string) []string {
+func (element *Segment) toArray() []string {
 	return []string{
-		element.Key,
-		original[element.Key],
+		element.ref.NameJp,
+		element.ref.NameEn,
 		element.Value,
 		element.Name,
 		element.Description,

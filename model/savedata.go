@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"slices"
@@ -14,8 +15,8 @@ type Dom string
 
 var (
 	UUID     Dom = "UUID"
-	NOKEY    Dom = "NOKEY"
-	ID       Dom = "ID"
+	ID       Dom = "NOKEY"
+	SEQUENCE Dom = "ID"
 	ENUM     Dom = "区分値"
 	CODE     Dom = "コード値"
 	BOOL     Dom = "可否/フラグ"
@@ -29,12 +30,11 @@ var (
 )
 
 type SaveData struct {
-	DataType       string            `yaml:"data_type"`
-	Version        string            `yaml:"version"`
-	Elements       []Element         `yaml:"elements"`
-	DeliveElements []DeliveElement   `yaml:"delive_elements"`
-	Segments       []Segment         `yaml:"segments"`
-	elementMap     map[string]string //Element.NameJp → Element.NameEn のマップ
+	DataType       string          `yaml:"data_type"`
+	Version        string          `yaml:"version"`
+	Elements       []Element       `yaml:"elements"`
+	DeliveElements []DeliveElement `yaml:"delive_elements"`
+	Segments       []Segment       `yaml:"segments"`
 }
 
 type Element struct {
@@ -51,17 +51,19 @@ type Element struct {
 }
 
 type DeliveElement struct {
-	Origin      string `yaml:"origin"`
-	NameJp      string `yaml:"name_jp"`
-	NameEn      string `yaml:"name_en"`
-	Description string `yaml:"description"`
+	Origin      string   `yaml:"origin"`
+	NameJp      string   `yaml:"name_jp"`
+	NameEn      string   `yaml:"name_en"`
+	Description string   `yaml:"description"`
+	ref         *Element // 参照元項目
 }
 
 type Segment struct {
-	Key         string `yaml:"key"`
-	Value       string `yaml:"value"`
-	Name        string `yaml:"name"`
-	Description string `yaml:"description"`
+	Key         string   `yaml:"key"`
+	Value       string   `yaml:"value"`
+	Name        string   `yaml:"name"`
+	Description string   `yaml:"description"`
+	ref         *Element // 参照元項目
 }
 
 func NewSaveData(path string) (*SaveData, error) {
@@ -78,15 +80,34 @@ func NewSaveData(path string) (*SaveData, error) {
 		return nil, err
 	}
 
-	// INFO: create elementmap
-	m := map[string]string{}
-	for _, elements := range savedata.Elements {
-		m[elements.NameJp] = elements.NameEn
+	// INFO: originの設定
+	for i := range savedata.DeliveElements {
+		element := &savedata.DeliveElements[i]
+		original, err := savedata.getElement(element.Origin)
+		if err != nil {
+			return nil, err
+		}
+		element.ref = original
 	}
-	savedata.elementMap = m
-
-	// fmt.Println(savedata) WARNING:
+	for i := range savedata.Segments {
+		element := &savedata.Segments[i]
+		original, err := savedata.getElement(element.Key)
+		if err != nil {
+			return nil, err
+		}
+		element.ref = original
+	}
 	return &savedata, nil
+}
+
+// 項目オブジェクトの取得
+func (savedata *SaveData) getElement(nameJp string) (*Element, error) {
+	for i := range savedata.Elements {
+		if savedata.Elements[i].NameJp == nameJp {
+			return &savedata.Elements[i], nil
+		}
+	}
+	return nil, errors.New("element not found")
 }
 
 // yamlファイルの書き込み
@@ -131,7 +152,7 @@ func (element Element) MarshalYAML() (interface{}, error) {
 			Example:     example,
 			Description: element.Description,
 		}, nil
-	} else if slices.Contains([]Dom{INTEGER, ID}, element.Domain) {
+	} else if slices.Contains([]Dom{INTEGER, SEQUENCE}, element.Domain) {
 		example, _ := strconv.ParseInt(element.Example, 10, 64)
 		return struct {
 			NameJp      string  `yaml:"name_jp"`
