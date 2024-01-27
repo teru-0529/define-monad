@@ -3,10 +3,10 @@ package model
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"slices"
 	"strconv"
 
+	"github.com/teru-0529/define-monad/store"
 	"gopkg.in/yaml.v3"
 )
 
@@ -91,19 +91,12 @@ func NewSaveData(path string) (*SaveData, error) {
 
 // yamlファイルの書き込み
 func (savedata *SaveData) Write(path string) error {
-
-	// INFO: create-directory
-	dir := filepath.Dir(path)
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		if err := os.MkdirAll(dir, 0777); err != nil {
-			return fmt.Errorf("cannot create directory: %s", err.Error())
-		}
-	}
-	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	// INFO: Fileの取得
+	file, cleanup, err := store.NewFile(path)
 	if err != nil {
-		return fmt.Errorf("cannot create file: %s", err.Error())
+		return err
 	}
-	defer file.Close()
+	defer cleanup()
 
 	// INFO: encode
 	yamlEncoder := yaml.NewEncoder(file)
