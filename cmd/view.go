@@ -42,7 +42,7 @@ var viewCmd = &cobra.Command{
 		segmentsPath := filepath.Join(outDir, segmentsFile)
 		monad.WriteViewSegments(segmentsPath)
 
-		fmt.Printf("input yaml file: [%s]\n", filepath.ToSlash(savedataPath))
+		fmt.Printf("input yaml file: [%s]\n", filepath.ToSlash(filepath.Clean(savedataPath)))
 		fmt.Printf("output tsv file(elements): [%s]\n", filepath.ToSlash(elementsPath))
 		fmt.Printf("output tsv file(derive-elements): [%s]\n", filepath.ToSlash(deriveElementsPath))
 		fmt.Printf("output tsv file(segments): [%s]\n", filepath.ToSlash(segmentsPath))

@@ -12,19 +12,37 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type Dom string
+
+var (
+	UUID     Dom = "UUID"
+	NOKEY    Dom = "NOKEY"
+	ID       Dom = "ID"
+	ENUM     Dom = "区分値"
+	CODE     Dom = "コード値"
+	BOOL     Dom = "可否/フラグ"
+	DATETIME Dom = "日時"
+	DATE     Dom = "日付"
+	TIME     Dom = "時間"
+	INTEGER  Dom = "整数"
+	NUMBER   Dom = "実数"
+	STRING   Dom = "文字列"
+	TEXT     Dom = "テキスト"
+)
+
 type SaveData struct {
-	DataType       string          `yaml:"data_type"`
-	Version        string          `yaml:"version"`
-	Elements       []Element       `yaml:"elements"`
-	DeliveElements []DeliveElement `yaml:"delive_elements"`
-	Segments       []Segment       `yaml:"segments"`
-	elementMap     map[string]string
+	DataType       string            `yaml:"data_type"`
+	Version        string            `yaml:"version"`
+	Elements       []Element         `yaml:"elements"`
+	DeliveElements []DeliveElement   `yaml:"delive_elements"`
+	Segments       []Segment         `yaml:"segments"`
+	elementMap     map[string]string //Element.NameJp → Element.NameEn のマップ
 }
 
 type Element struct {
 	NameJp      string  `yaml:"name_jp"`
 	NameEn      string  `yaml:"name_en"`
-	Domain      string  `yaml:"domain"`
+	Domain      Dom     `yaml:"domain"`
 	RegEx       *string `yaml:"reg_ex"`
 	MinDigits   *int    `yaml:"min_digits"`
 	MaxDigits   *int    `yaml:"max_digits"`
@@ -101,12 +119,12 @@ func (savedata *SaveData) Write(path string) error {
 }
 
 func (element Element) MarshalYAML() (interface{}, error) {
-	if element.Domain == "可否/フラグ" {
+	if element.Domain == BOOL {
 		example, _ := strconv.ParseBool(element.Example)
 		return struct {
 			NameJp      string  `yaml:"name_jp"`
 			NameEn      string  `yaml:"name_en"`
-			Domain      string  `yaml:"domain"`
+			Domain      Dom     `yaml:"domain"`
 			RegEx       *string `yaml:"reg_ex"`
 			MinDigits   *int    `yaml:"min_digits"`
 			MaxDigits   *int    `yaml:"max_digits"`
@@ -126,12 +144,12 @@ func (element Element) MarshalYAML() (interface{}, error) {
 			Example:     example,
 			Description: element.Description,
 		}, nil
-	} else if slices.Contains([]string{"整数", "ID"}, element.Domain) {
+	} else if slices.Contains([]Dom{INTEGER, ID}, element.Domain) {
 		example, _ := strconv.ParseInt(element.Example, 10, 64)
 		return struct {
 			NameJp      string  `yaml:"name_jp"`
 			NameEn      string  `yaml:"name_en"`
-			Domain      string  `yaml:"domain"`
+			Domain      Dom     `yaml:"domain"`
 			RegEx       *string `yaml:"reg_ex"`
 			MinDigits   *int    `yaml:"min_digits"`
 			MaxDigits   *int    `yaml:"max_digits"`
@@ -151,12 +169,12 @@ func (element Element) MarshalYAML() (interface{}, error) {
 			Example:     example,
 			Description: element.Description,
 		}, nil
-	} else if slices.Contains([]string{"実数"}, element.Domain) {
+	} else if slices.Contains([]Dom{NUMBER}, element.Domain) {
 		example, _ := strconv.ParseFloat(element.Example, 64)
 		return struct {
 			NameJp      string  `yaml:"name_jp"`
 			NameEn      string  `yaml:"name_en"`
-			Domain      string  `yaml:"domain"`
+			Domain      Dom     `yaml:"domain"`
 			RegEx       *string `yaml:"reg_ex"`
 			MinDigits   *int    `yaml:"min_digits"`
 			MaxDigits   *int    `yaml:"max_digits"`
@@ -180,7 +198,7 @@ func (element Element) MarshalYAML() (interface{}, error) {
 		return struct {
 			NameJp      string  `yaml:"name_jp"`
 			NameEn      string  `yaml:"name_en"`
-			Domain      string  `yaml:"domain"`
+			Domain      Dom     `yaml:"domain"`
 			RegEx       *string `yaml:"reg_ex"`
 			MinDigits   *int    `yaml:"min_digits"`
 			MaxDigits   *int    `yaml:"max_digits"`
@@ -239,7 +257,7 @@ func (element *Element) toArray() []string {
 	return []string{
 		element.NameJp,
 		element.NameEn,
-		element.Domain,
+		string(element.Domain),
 		lo.Ternary(lo.IsNil(element.RegEx), "", *element.RegEx),
 		int2Str(element.MinDigits),
 		int2Str(element.MaxDigits),
