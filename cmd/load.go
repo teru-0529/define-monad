@@ -15,7 +15,7 @@ var loadCmd = &cobra.Command{
 	Long:  "Read savedata from yaml and set excel sheet.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(savedataPath)
-		fmt.Println("load called")
+		fmt.Println("***command[load] completed.")
 	},
 }
 

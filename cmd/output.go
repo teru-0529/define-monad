@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
 	"slices"
 
 	"github.com/spf13/cobra"
@@ -36,13 +37,16 @@ var outputCmd = &cobra.Command{
 		}
 
 		// INFO: save-dataの読込み
-		_, err := model.NewSaveData(savedataPath)
+		monad, err := model.NewSaveData(savedataPath)
 		if err != nil {
 			return err
 		}
+		fmt.Printf("input yaml file: [%s]\n", filepath.ToSlash(filepath.Clean(savedataPath)))
 
 		if distType == TYPE_DDL {
-			fmt.Println("DDL create")
+			monad.WriteTypesDdl(distFile)
+			fmt.Println("output type: type-ddl")
+			fmt.Printf("output sql file: [%s]\n", filepath.ToSlash(distFile))
 
 		} else if distType == API_ELEMENT {
 			fmt.Println("API create")
@@ -52,7 +56,7 @@ var outputCmd = &cobra.Command{
 
 		}
 
-		fmt.Println("output command completed.")
+		fmt.Println("***command[output] completed.")
 		return nil
 	},
 }

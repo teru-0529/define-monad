@@ -46,7 +46,7 @@ var viewCmd = &cobra.Command{
 		fmt.Printf("output tsv file(elements): [%s]\n", filepath.ToSlash(elementsPath))
 		fmt.Printf("output tsv file(derive-elements): [%s]\n", filepath.ToSlash(deriveElementsPath))
 		fmt.Printf("output tsv file(segments): [%s]\n", filepath.ToSlash(segmentsPath))
-		fmt.Println("view command completed.")
+		fmt.Println("***command[view] completed.")
 		return nil
 	},
 }
