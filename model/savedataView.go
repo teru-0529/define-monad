@@ -11,7 +11,7 @@ import (
 // elements-viewの書き込み
 func (savedata *SaveData) WriteViewElements(path string) error {
 	// INFO: Writerの取得
-	writer, cleanup, err := store.NewWriter(path)
+	writer, cleanup, err := store.NewCsvWriter(path)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func int2Str(val *int) string {
 // derive-elements-viewの書き込み
 func (savedata *SaveData) WriteViewDeriveElements(path string) error {
 	// INFO: Writerの取得
-	writer, cleanup, err := store.NewWriter(path)
+	writer, cleanup, err := store.NewCsvWriter(path)
 	if err != nil {
 		return err
 	}
@@ -103,7 +103,7 @@ func (element *DeliveElement) toArray(original map[string]string) []string {
 // derive-elements-viewの書き込み
 func (savedata *SaveData) WriteViewSegments(path string) error {
 	// INFO: Writerの取得
-	writer, cleanup, err := store.NewWriter(path)
+	writer, cleanup, err := store.NewCsvWriter(path)
 	if err != nil {
 		return err
 	}

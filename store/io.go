@@ -8,7 +8,8 @@ import (
 	"path/filepath"
 )
 
-func NewWriter(fileName string) (*csv.Writer, func(), error) {
+// 書き込みファイルの準備（フォルダが無ければ作成する）
+func NewFile(fileName string) (*os.File, func(), error) {
 	dir := filepath.Dir(fileName)
 
 	// INFO: フォルダが存在しない場合作成する
@@ -23,6 +24,17 @@ func NewWriter(fileName string) (*csv.Writer, func(), error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot create file: %s", err.Error())
 	}
+	return file, func() { file.Close() }, nil
+}
+
+// csv用のライター
+func NewCsvWriter(fileName string) (*csv.Writer, func(), error) {
+	// INFO: ↑のファイル準備を呼び出す
+	file, cleanup, err := NewFile(fileName)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 
 	// INFO: Excelで文字化けしないようにする設定。BOM付きUTF8をfileの先頭に付与
 	buf := bufio.NewWriter(file)
@@ -32,5 +44,5 @@ func NewWriter(fileName string) (*csv.Writer, func(), error) {
 	writer := csv.NewWriter(buf)
 	writer.Comma = '\t' //タブ区切りに変更
 
-	return writer, func() { file.Close() }, nil
+	return writer, cleanup, nil
 }
