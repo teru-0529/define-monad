@@ -91,17 +91,13 @@ func NewSaveData(path string) (*SaveData, error) {
 
 // yamlファイルの書き込み
 func (savedata *SaveData) Write(path string) error {
-	// INFO: Fileの取得
-	file, cleanup, err := store.NewFile(path)
+	// INFO: Encoderの取得
+	encoder, cleanup, err := store.NewYamlEncorder(path)
 	if err != nil {
 		return err
 	}
 	defer cleanup()
-
-	// INFO: encode
-	yamlEncoder := yaml.NewEncoder(file)
-	yamlEncoder.SetIndent(2) // this is what you're looking for
-	err = yamlEncoder.Encode(&savedata)
+	err = encoder.Encode(&savedata)
 	if err != nil {
 		return err
 	}
