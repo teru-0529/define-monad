@@ -55,9 +55,8 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
   Call read_write_files.out_api_elements(adLF)
   Call read_write_files.out_type_ddl(adLF)
 
-  Call elements.out_view(adLF)
-  Call derive_elements.out_view(adLF)
-  Call segments.out_view(adLF)
+  '// view用のtsvファイルを保存したyamlファイルから生成(golang呼び出し)
+  outerExec ("view -D " & SAVE_DATA & " -O " & VIEW_DIR)
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   Application.ScreenUpdating = True
   Application.StatusBar = False

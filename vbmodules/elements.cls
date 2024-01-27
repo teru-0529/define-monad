@@ -478,7 +478,6 @@ Private Sub api_item(ByRef data() As String, ByVal elm As Range)
   Call push_array(data, "")
 End Sub
 
-
 'type_ddl書込
 Public Sub out_type_ddl(ByRef data() As String)
   Dim elm As Range
@@ -495,33 +494,6 @@ Public Sub out_type_ddl(ByRef data() As String)
     End If
   Next elm
   
-End Sub
-
-
-'elements.tsv(表示用)出力
-Public Sub out_view(ByVal line_sep As Integer)
-  Dim data() As String, elm As Range, i As Long
-  
-  Call push_array(data, array2tabstr("名称(JP)", "名称(EN)", "ドメイン", "正規表現", "最小桁数", "最大桁数", "最小値", "最大値", "API(example)", "説明"))
-  
-  For Each elm In UsedRange.Resize(, 1).Offset(1)
-    If elm.value <> "" Then
-      i = elm.Row
-      Call push_array(data, array2tabstr( _
-        Cells(i, col_no.項目名J).value, _
-        Cells(i, col_no.項目名EC).value, _
-        Cells(i, col_no.ドメイン).value, _
-        Cells(i, col_no.正規表現).value, _
-        Cells(i, col_no.最小桁数).value, _
-        Cells(i, col_no.最大桁数).value, _
-        Cells(i, col_no.最小値).value, _
-        Cells(i, col_no.最大値).value, _
-        Cells(i, col_no.API例).value, _
-        Cells(i, col_no.説明).value & " "))
-    End If
-  Next elm
-  
-  Call text_io.plain_out(Config.VIEW_ELEMENTS, data, line_sep)
 End Sub
 
 'DB制約文字列を構成
@@ -556,4 +528,3 @@ Public Function db_constraint_by_name(name As String, field_name As String) As S
   
   End If
 End Function
-

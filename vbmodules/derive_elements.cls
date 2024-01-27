@@ -177,30 +177,3 @@ Private Sub table_item(ByRef data() As String, ByVal elm As Range)
   Call push_array(data, indent(1) & to_yaml("origin", Cells(i, col_no.”h¶Œ³€–Ú–¼).value))
   Call push_array(data, "")
 End Sub
-
-
-'derive_elements.tsv(•\¦—p)o—Í
-Public Sub out_view(ByVal line_sep As Integer)
-  Dim data() As String, elm As Range, i As Long
-  
-  Call push_array(data, array2tabstr("”h¶Œ³", "–¼Ì(JP)", "–¼Ì(EN)", "à–¾"))
-  
-  For Each elm In UsedRange.Resize(, 1).Offset(1)
-    If elm.value <> "" Then
-      i = elm.Row
-      Call push_array(data, array2tabstr( _
-        Cells(i, col_no.”h¶Œ³€–Ú–¼).value, _
-        Cells(i, col_no.€–Ú–¼J).value, _
-        Cells(i, col_no.€–Ú–¼EC).value, _
-        Cells(i, col_no.à–¾).value & " "))
-    End If
-  Next elm
-  
-  Call text_io.plain_out(Config.VIEW_DERIVE_ELEMENTS, data, line_sep)
-End Sub
-
-
-
-
-
-
