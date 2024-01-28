@@ -251,6 +251,16 @@ elements:
     max_value: null
     example: "0012"
     description: 社員番号
+  - name_jp: ログID
+    name_en: logId
+    domain: UUID
+    reg_ex: null
+    min_digits: null
+    max_digits: null
+    min_value: null
+    max_value: null
+    example: ede66c43-9b9d-4222-93ed-5f11c96e08e2
+    description: ログのID
 delive_elements:
   - origin: 定価
     name_jp: キャンペーン定価

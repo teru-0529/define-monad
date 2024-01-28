@@ -213,3 +213,11 @@ emploeeNo:
   description: 社員番号
   example: '0012'
 
+# ログID
+# : ログのID
+logId:
+  type: string
+  format: uuid
+  description: ログのID
+  example: 'ede66c43-9b9d-4222-93ed-5f11c96e08e2'
+
