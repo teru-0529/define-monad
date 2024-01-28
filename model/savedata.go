@@ -126,6 +126,7 @@ func (savedata *SaveData) Write(path string) error {
 	return nil
 }
 
+// toYaml
 func (element Element) MarshalYAML() (interface{}, error) {
 	if element.Domain == BOOL {
 		example, _ := strconv.ParseBool(element.Example)

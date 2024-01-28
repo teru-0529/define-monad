@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/samber/lo"
@@ -11,7 +12,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// FIXME:
 type ApiElement struct {
 	ApiType     string   `yaml:"type"`
 	ApiFormat   string   `yaml:"format,omitempty"`
@@ -181,6 +181,110 @@ func (apiElement *ApiElement) toYamlStr() string {
 	arr = lo.Map(arr, func(item string, index int) string { return fmt.Sprintf("  %s", item) })
 	// 改行コードで連結しなおし、最後に改行コードを追加
 	return fmt.Sprintf("%s\n\n", strings.Join(arr, "\n"))
+}
+
+// toYaml
+func (element ApiElement) MarshalYAML() (interface{}, error) {
+	if element.ApiType == "boolean" {
+		example, _ := strconv.ParseBool(element.Example)
+		return struct {
+			ApiType     string   `yaml:"type"`
+			ApiFormat   string   `yaml:"format,omitempty"`
+			RegEx       *string  `yaml:"pattern,omitempty"`
+			Enum        []string `yaml:"enum,omitempty"`
+			MinDigits   *int     `yaml:"minLength,omitempty"`
+			MaxDigits   *int     `yaml:"maxLength,omitempty"`
+			MinValue    *int     `yaml:"minimum,omitempty"`
+			MaxValue    *int     `yaml:"maximum,omitempty"`
+			Description string   `yaml:"description"`
+			Example     bool     `yaml:"example"`
+		}{
+			ApiType:     element.ApiType,
+			ApiFormat:   element.ApiFormat,
+			RegEx:       element.RegEx,
+			Enum:        element.Enum,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			MaxValue:    element.MaxValue,
+			Description: element.Description,
+			Example:     example,
+		}, nil
+	} else if element.ApiType == "integer" {
+		example, _ := strconv.ParseInt(element.Example, 10, 64)
+		return struct {
+			ApiType     string   `yaml:"type"`
+			ApiFormat   string   `yaml:"format,omitempty"`
+			RegEx       *string  `yaml:"pattern,omitempty"`
+			Enum        []string `yaml:"enum,omitempty"`
+			MinDigits   *int     `yaml:"minLength,omitempty"`
+			MaxDigits   *int     `yaml:"maxLength,omitempty"`
+			MinValue    *int     `yaml:"minimum,omitempty"`
+			MaxValue    *int     `yaml:"maximum,omitempty"`
+			Description string   `yaml:"description"`
+			Example     int64    `yaml:"example"`
+		}{
+			ApiType:     element.ApiType,
+			ApiFormat:   element.ApiFormat,
+			RegEx:       element.RegEx,
+			Enum:        element.Enum,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			MaxValue:    element.MaxValue,
+			Description: element.Description,
+			Example:     example,
+		}, nil
+	} else if element.ApiType == "number" {
+		example, _ := strconv.ParseFloat(element.Example, 64)
+		return struct {
+			ApiType     string   `yaml:"type"`
+			ApiFormat   string   `yaml:"format,omitempty"`
+			RegEx       *string  `yaml:"pattern,omitempty"`
+			Enum        []string `yaml:"enum,omitempty"`
+			MinDigits   *int     `yaml:"minLength,omitempty"`
+			MaxDigits   *int     `yaml:"maxLength,omitempty"`
+			MinValue    *int     `yaml:"minimum,omitempty"`
+			MaxValue    *int     `yaml:"maximum,omitempty"`
+			Description string   `yaml:"description"`
+			Example     float64  `yaml:"example"`
+		}{
+			ApiType:     element.ApiType,
+			ApiFormat:   element.ApiFormat,
+			RegEx:       element.RegEx,
+			Enum:        element.Enum,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			MaxValue:    element.MaxValue,
+			Description: element.Description,
+			Example:     example,
+		}, nil
+	} else {
+		return struct {
+			ApiType     string   `yaml:"type"`
+			ApiFormat   string   `yaml:"format,omitempty"`
+			RegEx       *string  `yaml:"pattern,omitempty"`
+			Enum        []string `yaml:"enum,omitempty"`
+			MinDigits   *int     `yaml:"minLength,omitempty"`
+			MaxDigits   *int     `yaml:"maxLength,omitempty"`
+			MinValue    *int     `yaml:"minimum,omitempty"`
+			MaxValue    *int     `yaml:"maximum,omitempty"`
+			Description string   `yaml:"description"`
+			Example     string   `yaml:"example"`
+		}{
+			ApiType:     element.ApiType,
+			ApiFormat:   element.ApiFormat,
+			RegEx:       element.RegEx,
+			Enum:        element.Enum,
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			MaxValue:    element.MaxValue,
+			Description: element.Description,
+			Example:     element.Example,
+		}, nil
+	}
 }
 
 // apiスキーマタイプ
