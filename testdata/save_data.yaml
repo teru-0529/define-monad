@@ -18,7 +18,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: 0
-    max_value: 99999
+    max_value: null
     example: 14000
     description: 円、希望小売価格
   - name_jp: UP
@@ -27,7 +27,7 @@ elements:
     reg_ex: null
     min_digits: null
     max_digits: null
-    min_value: 0
+    min_value: -1000
     max_value: 1000
     example: 250.25
     description: 仕入れ先からの購入価格
@@ -187,7 +187,7 @@ elements:
     reg_ex: null
     min_digits: null
     max_digits: null
-    min_value: -10
+    min_value: null
     max_value: 10
     example: 0.324
     description: 利益率
