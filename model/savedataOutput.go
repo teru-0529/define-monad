@@ -2,11 +2,25 @@ package model
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"github.com/samber/lo"
 	"github.com/teru-0529/define-monad/store"
 )
+
+type TableElement struct {
+	NameJp          string  `yaml:"name_jp"`
+	NameEn          string  `yaml:"name_en"`
+	DbModel         string  `yaml:"db_model"`
+	Constraint      *string `yaml:"constraint"`
+	MustNotNull     bool    `yaml:"must_not_null"`
+	IsStringDefault bool    `yaml:"is_string_default"`
+	Description     string  `yaml:"description"`
+	IsOrigin        bool    `yaml:"is_origin"`
+	Origin          *string `yaml:"origin"`
+	Dummy           *string `yaml:"dummy-row"` //FIXME:DB側が修正されるまでのダミー
+}
 
 // types-ddlの書き込み
 func (savedata *SaveData) WriteTypesDdl(path string) error {
@@ -41,6 +55,134 @@ func (savedata *SaveData) WriteTypesDdl(path string) error {
 	}
 
 	return nil
+}
+
+// types-ddlの書き込み
+func (savedata *SaveData) WriteTableElements(path string) error {
+	tableElements := []TableElement{}
+
+	for _, element := range savedata.Elements {
+		tableElements = append(tableElements, TableElement{
+			NameJp:          element.NameJp,
+			NameEn:          element.nameEnSnake(),
+			DbModel:         element.dbModel(),
+			Constraint:      element.constraint(),
+			MustNotNull:     element.mustNotNull(),
+			IsStringDefault: element.isDefaultStr(),
+			Description:     element.Description,
+			IsOrigin:        true,
+			Origin:          nil,
+		})
+	}
+
+	for _, element := range savedata.DeliveElements {
+		tableElements = append(tableElements, TableElement{
+			NameJp:          element.NameJp,
+			NameEn:          element.nameEnSnake(),
+			DbModel:         element.ref.dbModel(),
+			Constraint:      element.constraint(),
+			MustNotNull:     element.ref.mustNotNull(),
+			IsStringDefault: element.ref.isDefaultStr(),
+			Description:     element.Description,
+			IsOrigin:        false,
+			Origin:          &element.ref.NameJp,
+		})
+	}
+
+	// INFO: Encoderの取得
+	encoder, cleanup, err := store.NewYamlEncorder(path)
+	if err != nil {
+		return err
+	}
+	defer cleanup()
+
+	// INFO: 書き込み
+	err = encoder.Encode(&tableElements)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// スネークケースの名称
+func (element *Element) nameEnSnake() string {
+	return snakeCase(element.NameEn)
+}
+
+// db制約
+func (element *Element) dbModel() string {
+	if element.Domain == SEQUENCE {
+		return "serial"
+	} else if element.Domain == BOOL {
+		return "boolean"
+	} else if element.Domain == INTEGER {
+		return "integer"
+	} else if element.Domain == NUMBER {
+		return "numeric"
+	} else if element.Domain == TEXT {
+		return "text"
+	} else if element.Domain == DATE {
+		return "date"
+	} else if element.Domain == DATETIME {
+		return "timestamp"
+	} else if element.Domain == TIME {
+		return "varchar(5)"
+	} else if element.Domain == ENUM {
+		return element.nameEnSnake()
+	} else {
+		return fmt.Sprintf("varchar(%d)", *element.MaxDigits)
+	}
+}
+
+// db制約(リダイレクトメソッド)
+func (element *Element) constraint() *string {
+	return element._constraint(element.nameEnSnake())
+}
+
+// db制約
+func (element *Element) _constraint(nameEnSnake string) *string {
+	if element.RegEx != nil {
+		// 正規表現が設定されている
+		result := fmt.Sprintf("(%s ~* '%s')", nameEnSnake, *element.RegEx)
+		return &result
+	} else if element.MinDigits != nil {
+		// 最小桁数が設定されている
+		result := fmt.Sprintf("(LENGTH(%s) >= %d)", nameEnSnake, *element.MinDigits)
+		return &result
+	} else if element.MinValue != nil && element.Maxvalue != nil {
+		// 最小値・最大値の両方が設定されている
+		result := fmt.Sprintf("(%d <= %s AND %s <= %d)", *element.MinValue, nameEnSnake, nameEnSnake, *element.Maxvalue)
+		return &result
+	} else if element.MinValue != nil {
+		// 最小値が設定されている
+		result := fmt.Sprintf("(%s >= %d)", nameEnSnake, *element.MinValue)
+		return &result
+	} else if element.Maxvalue != nil {
+		// 最大値が設定されている
+		result := fmt.Sprintf("(%s <= %d)", nameEnSnake, *element.Maxvalue)
+		return &result
+	}
+	return nil
+}
+
+// DDLでNotNullを強制するかどうか
+func (element *Element) mustNotNull() bool {
+	return slices.Contains([]Dom{ENUM, BOOL}, element.Domain)
+}
+
+// DDLに記載するデフォルトが文字列扱いかどうか
+func (element *Element) isDefaultStr() bool {
+	return slices.Contains([]Dom{ID, ENUM, CODE, STRING, TEXT}, element.Domain)
+}
+
+// スネークケースの名称
+func (element *DeliveElement) nameEnSnake() string {
+	return snakeCase(element.NameEn)
+}
+
+// db制約(リダイレクトメソッド)
+func (element *DeliveElement) constraint() *string {
+	return element.ref._constraint(element.nameEnSnake())
 }
 
 // スネークケース変換(あえて独自に実装：数値を大文字と同じ(数値の前にアンダーバー)とする仕様)
