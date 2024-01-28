@@ -330,6 +330,8 @@ func (element *Element) dbModel() string {
 		return "numeric"
 	} else if element.Domain == TEXT {
 		return "text"
+	} else if element.Domain == UUID {
+		return "uuid"
 	} else if element.Domain == DATE {
 		return "date"
 	} else if element.Domain == DATETIME {
