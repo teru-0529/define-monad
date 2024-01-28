@@ -51,9 +51,15 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   '業務ロジック
   Call read_write_files.save_(adLF)
-  Call read_write_files.out_table_elements(adLF)
-  Call read_write_files.out_api_elements(adLF)
-  Call read_write_files.out_type_ddl(adLF)
+
+  '// テーブル定義用要素を保存したyamlファイルから生成(golang呼び出し)
+  outerExec ("output -T db-element -D " & SAVE_DATA & " -F " & TABLE_ELEMENTS)
+
+  '// OpenAPI定義用要素を保存したyamlファイルから生成(golang呼び出し)
+  outerExec ("output -T api-element -D " & SAVE_DATA & " -F " & API_ELEMENTS)
+
+  '// DB用Enum定義を保存したyamlファイルから生成(golang呼び出し)
+  outerExec ("output -T type-ddl -D " & SAVE_DATA & " -F " & TYPES_DDL)
 
   '// view用のtsvファイルを保存したyamlファイルから生成(golang呼び出し)
   outerExec ("view -D " & SAVE_DATA & " -O " & VIEW_DIR)

@@ -134,36 +134,16 @@ Public Function to_yaml(ByVal key As String, ByVal value As String) As String
   If value = "" Then to_yaml = to_yaml & NULL_VALUE Else: to_yaml = to_yaml & value
 End Function
 
-
 ' yaml 用のkey-value文字列からvalueを抽出する（valueがnull値の場合は空文字に変換）
 Public Function from_yaml(ByVal yaml As String) As String
   Dim val As String
-  
+
   'yaml形式ではない場合はブランク
   If InStr(yaml, ":") = 0 Then
     from_yaml = ""
     Exit Function
   End If
-  
+
   val = Trim(Mid(yaml, InStr(yaml, ":") + 1))
   If val = NULL_VALUE Then from_yaml = "" Else from_yaml = val
 End Function
-
-'デフォルト値が文字列かどうか
-Public Function is_string_default(ByVal val As String) As String
-  If val = "NOKEY" Or val = "区分値" Or val = "コード値" Or val = "文字列" Or val = "テキスト" Then
-    is_string_default = "true"
-  Else
-    is_string_default = "false"
-  End If
-End Function
-
-'NULL制約が必須かどうか
-Public Function must_not_null(ByVal val As String) As String
-  If val = "区分値" Or val = "可否/フラグ" Then
-    must_not_null = "true"
-  Else
-    must_not_null = "false"
-  End If
-End Function
-
