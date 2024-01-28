@@ -49,7 +49,9 @@ var outputCmd = &cobra.Command{
 			fmt.Printf("output sql file: [%s]\n", filepath.ToSlash(distFile))
 
 		} else if distType == API_ELEMENT {
-			fmt.Println("API create")
+			monad.WriteApiElements(distFile)
+			fmt.Println("output type: api-element")
+			fmt.Printf("output yaml file: [%s]\n", filepath.ToSlash(distFile))
 
 		} else if distType == DB_ELEMENT {
 			err := monad.WriteTableElements(distFile)

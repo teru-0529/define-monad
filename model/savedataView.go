@@ -49,7 +49,7 @@ func (element *Element) toArray() []string {
 		int2Str(element.MinDigits),
 		int2Str(element.MaxDigits),
 		int2Str(element.MinValue),
-		int2Str(element.Maxvalue),
+		int2Str(element.MaxValue),
 		element.Example,
 		element.Description,
 	}

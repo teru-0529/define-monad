@@ -1,13 +1,29 @@
 package model
 
 import (
+	"bytes"
 	"fmt"
 	"slices"
 	"strings"
 
 	"github.com/samber/lo"
 	"github.com/teru-0529/define-monad/store"
+	"gopkg.in/yaml.v3"
 )
+
+// FIXME:
+type ApiElement struct {
+	ApiType     string   `yaml:"type"`
+	ApiFormat   string   `yaml:"format,omitempty"`
+	RegEx       *string  `yaml:"pattern,omitempty"`
+	Enum        []string `yaml:"enum,omitempty"`
+	MinDigits   *int     `yaml:"minLength,omitempty"`
+	MaxDigits   *int     `yaml:"maxLength,omitempty"`
+	MinValue    *int     `yaml:"minimum,omitempty"`
+	MaxValue    *int     `yaml:"maximum,omitempty"`
+	Description string   `yaml:"description"`
+	Example     string   `yaml:"example"`
+}
 
 type TableElement struct {
 	NameJp          string  `yaml:"name_jp"`
@@ -57,7 +73,40 @@ func (savedata *SaveData) WriteTypesDdl(path string) error {
 	return nil
 }
 
-// types-ddlの書き込み
+// api-elementsの書き込み
+func (savedata *SaveData) WriteApiElements(path string) error {
+	// INFO: Fileの取得
+	file, cleanup, err := store.NewFile(path)
+	if err != nil {
+		return err
+	}
+	defer cleanup()
+
+	// INFO: Elementの項目を順次処理
+	for _, element := range savedata.Elements {
+
+		file.WriteString(fmt.Sprintf("# %s\n%s:\n", element.NameJp, element.NameEn))
+
+		apiElement := ApiElement{
+			ApiType:     element.apiType(),
+			ApiFormat:   element.apiFormat(),
+			RegEx:       element.RegEx,
+			Enum:        savedata.segmentValues(element.NameJp),
+			MinDigits:   element.MinDigits,
+			MaxDigits:   element.MaxDigits,
+			MinValue:    element.MinValue,
+			MaxValue:    element.MaxValue,
+			Description: element.Description,
+			Example:     element.Example,
+		}
+
+		file.WriteString(apiElement.toYamlStr())
+	}
+
+	return nil
+}
+
+// db-elementsの書き込み
 func (savedata *SaveData) WriteTableElements(path string) error {
 	tableElements := []TableElement{}
 
@@ -102,6 +151,62 @@ func (savedata *SaveData) WriteTableElements(path string) error {
 		return err
 	}
 	return nil
+}
+
+// 区分値を配列で返す
+func (savedata *SaveData) segmentValues(key string) []string {
+	return lo.FilterMap(savedata.Segments, func(item Segment, _ int) (string, bool) {
+		if item.Key == key {
+			return item.Value, true
+		} else {
+			return "", false
+		}
+	})
+}
+
+// yaml文字列の出力
+func (apiElement *ApiElement) toYamlStr() string {
+	// INFO: encode（インデントは2）
+	var b bytes.Buffer
+	encoder := yaml.NewEncoder(&b)
+	encoder.SetIndent(2)
+	encoder.Encode(apiElement)
+
+	// INFO: 要素なのでインデントを追加（一度配列化してMap処理）
+	// 文字列にしてから改行コードで分割し配列化
+	arr := strings.Split(b.String(), "\n")
+	// 最終要素を削除（最終行に改行コードがあるため）
+	arr = append([]string{}, arr[:len(arr)-1]...)
+	// インデント追加
+	arr = lo.Map(arr, func(item string, index int) string { return fmt.Sprintf("  %s", item) })
+	// 改行コードで連結しなおし、最後に改行コードを追加
+	return fmt.Sprintf("%s\n\n", strings.Join(arr, "\n"))
+}
+
+// apiスキーマタイプ
+func (element *Element) apiType() string {
+	if slices.Contains([]Dom{SEQUENCE, INTEGER}, element.Domain) {
+		return "integer"
+	} else if element.Domain == BOOL {
+		return "boolean"
+	} else if element.Domain == NUMBER {
+		return "number"
+	} else {
+		return "string"
+	}
+}
+
+// apiスキーマフォーマット
+func (element *Element) apiFormat() string {
+	if element.Domain == UUID {
+		return "uuid"
+	} else if element.Domain == DATE {
+		return "date"
+	} else if element.Domain == DATETIME {
+		return "date-time"
+	} else {
+		return ""
+	}
 }
 
 // スネークケースの名称
@@ -149,17 +254,17 @@ func (element *Element) _constraint(nameEnSnake string) *string {
 		// 最小桁数が設定されている
 		result := fmt.Sprintf("(LENGTH(%s) >= %d)", nameEnSnake, *element.MinDigits)
 		return &result
-	} else if element.MinValue != nil && element.Maxvalue != nil {
+	} else if element.MinValue != nil && element.MaxValue != nil {
 		// 最小値・最大値の両方が設定されている
-		result := fmt.Sprintf("(%d <= %s AND %s <= %d)", *element.MinValue, nameEnSnake, nameEnSnake, *element.Maxvalue)
+		result := fmt.Sprintf("(%d <= %s AND %s <= %d)", *element.MinValue, nameEnSnake, nameEnSnake, *element.MaxValue)
 		return &result
 	} else if element.MinValue != nil {
 		// 最小値が設定されている
 		result := fmt.Sprintf("(%s >= %d)", nameEnSnake, *element.MinValue)
 		return &result
-	} else if element.Maxvalue != nil {
+	} else if element.MaxValue != nil {
 		// 最大値が設定されている
-		result := fmt.Sprintf("(%s <= %d)", nameEnSnake, *element.Maxvalue)
+		result := fmt.Sprintf("(%s <= %d)", nameEnSnake, *element.MaxValue)
 		return &result
 	}
 	return nil

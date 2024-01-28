@@ -45,7 +45,7 @@ type Element struct {
 	MinDigits   *int    `yaml:"min_digits"`
 	MaxDigits   *int    `yaml:"max_digits"`
 	MinValue    *int    `yaml:"min_value"`
-	Maxvalue    *int    `yaml:"max_value"`
+	MaxValue    *int    `yaml:"max_value"`
 	Example     string  `yaml:"example"`
 	Description string  `yaml:"description"`
 }
@@ -148,7 +148,7 @@ func (element Element) MarshalYAML() (interface{}, error) {
 			MinDigits:   element.MinDigits,
 			MaxDigits:   element.MaxDigits,
 			MinValue:    element.MinValue,
-			Maxvalue:    element.Maxvalue,
+			Maxvalue:    element.MaxValue,
 			Example:     example,
 			Description: element.Description,
 		}, nil
@@ -173,7 +173,7 @@ func (element Element) MarshalYAML() (interface{}, error) {
 			MinDigits:   element.MinDigits,
 			MaxDigits:   element.MaxDigits,
 			MinValue:    element.MinValue,
-			Maxvalue:    element.Maxvalue,
+			Maxvalue:    element.MaxValue,
 			Example:     example,
 			Description: element.Description,
 		}, nil
@@ -198,7 +198,7 @@ func (element Element) MarshalYAML() (interface{}, error) {
 			MinDigits:   element.MinDigits,
 			MaxDigits:   element.MaxDigits,
 			MinValue:    element.MinValue,
-			Maxvalue:    element.Maxvalue,
+			Maxvalue:    element.MaxValue,
 			Example:     example,
 			Description: element.Description,
 		}, nil
@@ -222,7 +222,7 @@ func (element Element) MarshalYAML() (interface{}, error) {
 			MinDigits:   element.MinDigits,
 			MaxDigits:   element.MaxDigits,
 			MinValue:    element.MinValue,
-			Maxvalue:    element.Maxvalue,
+			Maxvalue:    element.MaxValue,
 			Example:     element.Example,
 			Description: element.Description,
 		}, nil
