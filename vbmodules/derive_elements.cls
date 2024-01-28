@@ -91,7 +91,6 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
 End Sub
 
 
-
 '¡¡¡¡¡«IO@¡¡¡¡¡
 
 'save_data“Ç
@@ -120,60 +119,23 @@ Public Sub load_(ByRef data() As String)
   
 End Sub
 
-
 'save_data‘
 '// FIXME:ššššRefactering to Backend
 Public Sub save_(ByRef data() As String)
   Dim elm As Range
-  
+
   For Each elm In UsedRange.Resize(, 1).Offset(1)
     If elm.value <> "" Then Call save_item(data, elm)
   Next elm
-  
+
 End Sub
 
 '// FIXME:ššššRefactering to Backend
 Private Sub save_item(ByRef data() As String, ByVal elm As Range)
   Dim i As Long: i = elm.Row
-  
+
   Call push_array(data, indent(1) & "- " & to_yaml("origin", Cells(i, col_no.”h¶Œ³€–Ú–¼).value))
   Call push_array(data, indent(2) & to_yaml("name_jp", Cells(i, col_no.€–Ú–¼J).value))
   Call push_array(data, indent(2) & to_yaml("name_en", Cells(i, col_no.€–Ú–¼EC).value))
   Call push_array(data, indent(2) & to_yaml("description", Cells(i, col_no.à–¾).value))
-End Sub
-
-
-'table_elements‘
-Public Sub out_table(ByRef data() As String)
-  Dim elm As Range
-  
-  For Each elm In UsedRange.Resize(, 1).Offset(1)
-    If elm.value <> "" Then Call table_item(data, elm)
-  Next elm
-  
-End Sub
-
-Private Sub table_item(ByRef data() As String, ByVal elm As Range)
-  Dim i As Long: i = elm.Row
-  
-  '€–ÚƒV[ƒg‚Ì”h¶Œ³‚©‚çæ“¾
-  Dim domain As String: domain = elements.get_val(Cells(i, col_no.”h¶Œ³€–Ú–¼).value, 3, "")
-  Dim maxlen As String: maxlen = elements.get_val(Cells(i, col_no.”h¶Œ³€–Ú–¼).value, 6, "")
-  Dim name_en As String: name_en = elements.get_val(Cells(i, col_no.”h¶Œ³€–Ú–¼).value, 2, "")
-  Dim constraint As String: constraint = elements.db_constraint_by_name(Cells(i, col_no.”h¶Œ³€–Ú–¼).value, Cells(i, col_no.€–Ú–¼ES).value)
-  
-  Call push_array(data, "- " & to_yaml("name_jp", Cells(i, col_no.€–Ú–¼J).value))
-  Call push_array(data, indent(1) & to_yaml("name_en", Cells(i, col_no.€–Ú–¼ES).value))
-  If domain = "‹æ•ª’l" Then
-    Call push_array(data, indent(1) & to_yaml("db_model", name_en))
-  Else
-    Call push_array(data, indent(1) & to_yaml("db_model", domain_types.get_db_model(domain, maxlen)))
-  End If
-  Call push_array(data, indent(1) & to_yaml("constraint", constraint))
-  Call push_array(data, indent(1) & to_yaml("must_not_null", must_not_null(domain)))
-  Call push_array(data, indent(1) & to_yaml("is_string_default", is_string_default(domain)))
-  Call push_array(data, indent(1) & to_yaml("description", Cells(i, col_no.à–¾).value))
-  Call push_array(data, indent(1) & to_yaml("is_origin", "false"))
-  Call push_array(data, indent(1) & to_yaml("origin", Cells(i, col_no.”h¶Œ³€–Ú–¼).value))
-  Call push_array(data, "")
 End Sub

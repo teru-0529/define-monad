@@ -105,70 +105,25 @@ Public Sub load_(ByRef data() As String)
   
   '値セット
   Cells(2, col_no.項目名J).Resize(row_length, 4) = wk_range_1
-  
 End Sub
-
 
 'save_data書込
 '// FIXME:★★★★Refactering to Backend
 Public Sub save_(ByRef data() As String)
   Dim elm As Range
-  
+
   For Each elm In UsedRange.Resize(, 1).Offset(1)
     If elm.value <> "" Then Call save_item(data, elm)
   Next elm
-  
+
 End Sub
 
 '// FIXME:★★★★Refactering to Backend
 Private Sub save_item(ByRef data() As String, ByVal elm As Range)
   Dim i As Long: i = elm.Row
-  
+
   Call push_array(data, indent(1) & "- " & to_yaml("key", Cells(i, col_no.項目名J).value))
   Call push_array(data, indent(2) & to_yaml("value", Cells(i, col_no.区分値).value))
   Call push_array(data, indent(2) & to_yaml("name", Cells(i, col_no.区分名).value))
   Call push_array(data, indent(2) & to_yaml("description", Cells(i, col_no.説明).value))
-End Sub
-
-
-'APIパラメータの出力
-Public Sub api_value(ByRef data() As String, ByVal name As String, ByVal indent As String)
-  Dim elm As Range, i As Long:
-  
-  For Each elm In UsedRange.Resize(, 1).Offset(1)
-    i = elm.Row
-    If elm.value = name Then Call push_array(data, indent & Cells(i, col_no.区分値).value)
-    '##TODO: enum定義の際シングルクォートが必要かどうか
-    'If elm.value = name Then Call push_array(data, indent & "'" & Cells(i, col_no.区分値C).value & "'")
-  Next elm
-End Sub
-
-
-'APIパラメータの出力
-Public Sub api_desc(ByRef data() As String, ByVal name As String, ByVal indent As String)
-  Dim elm As Range, i As Long:
-  
-  For Each elm In UsedRange.Resize(, 1).Offset(1)
-    i = elm.Row
-    If elm.value = name Then Call push_array(data, indent & Cells(i, col_no.区分値).value & " : " & Cells(i, col_no.区分名).value)
-  Next elm
-End Sub
-
-
-'DDLパラメータの出力
-Public Sub ddl_value(ByRef data() As String, ByVal name As String, ByVal indent As String)
-  Dim elm As Range, i As Long
-  Dim wk() As String
-  
-  '一度wkに入れる（最後だけカンマつけたくないため）
-  For Each elm In UsedRange.Resize(, 1).Offset(1)
-    i = elm.Row
-    If elm.value = name Then Call push_array(wk, indent & "'" & Cells(i, col_no.区分値).value & "'")
-  Next elm
-  
-  For i = 0 To UBound(wk) - 1
-    Call push_array(data, wk(i) & ",")
-  Next i
-  Call push_array(data, wk(UBound(wk)))
-  
 End Sub

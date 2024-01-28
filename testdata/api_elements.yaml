@@ -12,7 +12,6 @@ productNo:
 price:
   type: integer
   minimum: 0
-  maximum: 99999
   description: 円、希望小売価格
   example: 14000
 
@@ -20,7 +19,7 @@ price:
 # : 仕入れ先からの購入価格
 up:
   type: number
-  minimum: 0
+  minimum: -1000
   maximum: 1000
   description: 仕入れ先からの購入価格
   example: 250.25
@@ -159,7 +158,6 @@ isWorking:
 # : 利益率
 profitRate:
   type: number
-  minimum: -10
   maximum: 10
   description: 利益率
   example: 0.324
@@ -214,4 +212,12 @@ emploeeNo:
   maxLength: 4
   description: 社員番号
   example: '0012'
+
+# ログID
+# : ログのID
+logId:
+  type: string
+  format: uuid
+  description: ログのID
+  example: 'ede66c43-9b9d-4222-93ed-5f11c96e08e2'
 

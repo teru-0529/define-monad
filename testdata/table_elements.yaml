@@ -11,7 +11,7 @@
 - name_jp: 定価
   name_en: price
   db_model: integer
-  constraint: (0 <= price AND price <= 99999)
+  constraint: (0 <= price AND price <= )
   must_not_null: false
   is_string_default: false
   description: 円、希望小売価格
@@ -21,7 +21,7 @@
 - name_jp: UP
   name_en: up
   db_model: numeric
-  constraint: (0 <= up AND up <= 1000)
+  constraint: (-1000 <= up AND up <= 1000)
   must_not_null: false
   is_string_default: false
   description: 仕入れ先からの購入価格
@@ -181,7 +181,7 @@
 - name_jp: 利益率
   name_en: profit_rate
   db_model: numeric
-  constraint: (-10 <= profit_rate AND profit_rate <= 10)
+  constraint: null
   must_not_null: false
   is_string_default: false
   description: 利益率
@@ -248,10 +248,20 @@
   is_origin: true
   origin: null
 
+- name_jp: ログID
+  name_en: log_id
+  db_model: uuid
+  constraint: null
+  must_not_null: false
+  is_string_default: false
+  description: ログのID
+  is_origin: true
+  origin: null
+
 - name_jp: キャンペーン定価
   name_en: campane_price
   db_model: integer
-  constraint: (0 <= campane_price AND campane_price <= 99999)
+  constraint: (0 <= campane_price AND campane_price <= )
   must_not_null: false
   is_string_default: false
   description: キャンペーンの定価

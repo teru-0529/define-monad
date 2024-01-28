@@ -1,5 +1,5 @@
 data_type: define_elements
-version: 3.0.0
+version: 3.0.1
 elements:
   - name_jp: 商品No
     name_en: productNo
@@ -18,7 +18,7 @@ elements:
     min_digits: null
     max_digits: null
     min_value: 0
-    max_value: 99999
+    max_value: null
     example: 14000
     description: 円、希望小売価格
   - name_jp: UP
@@ -27,7 +27,7 @@ elements:
     reg_ex: null
     min_digits: null
     max_digits: null
-    min_value: 0
+    min_value: -1000
     max_value: 1000
     example: 250.25
     description: 仕入れ先からの購入価格
@@ -187,7 +187,7 @@ elements:
     reg_ex: null
     min_digits: null
     max_digits: null
-    min_value: -10
+    min_value: null
     max_value: 10
     example: 0.324
     description: 利益率
@@ -251,6 +251,16 @@ elements:
     max_value: null
     example: "0012"
     description: 社員番号
+  - name_jp: ログID
+    name_en: logId
+    domain: UUID
+    reg_ex: null
+    min_digits: null
+    max_digits: null
+    min_value: null
+    max_value: null
+    example: ede66c43-9b9d-4222-93ed-5f11c96e08e2
+    description: ログのID
 delive_elements:
   - origin: 定価
     name_jp: キャンペーン定価
