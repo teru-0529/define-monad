@@ -28,13 +28,6 @@ var viewCmd = &cobra.Command{
 			return err
 		}
 
-		//FIXME:確認用、後で消す
-		err = monad.Write("./monad.yaml")
-		if err != nil {
-			return err
-		}
-		//FIXME:確認用、後で消す
-
 		elementsPath := filepath.Join(outDir, elementsFile)
 		monad.WriteViewElements(elementsPath)
 		deriveElementsPath := filepath.Join(outDir, deriveElementsFile)
