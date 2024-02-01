@@ -45,7 +45,7 @@ archives:
       - README*
       - 項目定義.xlsm
       - vba.ini
-      - testdata/save_data.yaml
+      - save_data.yaml
 
 changelog:
   sort: asc
