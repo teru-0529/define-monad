@@ -1,5 +1,6 @@
 data_type: define_elements
 version: 3.0.2
+create_at: 2024-02-03T07:58:28+09:00
 elements:
   - name_jp: 商品No
     name_en: productNo
