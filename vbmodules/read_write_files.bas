@@ -16,7 +16,7 @@ Public Sub load_(ByVal line_sep As Integer)
   s2 = get_sep_no(data, "segments:")
   
   'elements入力
-  For i = 3 To (s1 - 1)
+  For i = 4 To (s1 - 1)
     Call push_array(elements_d, data(i))
   Next i
   Call elements.load_(elements_d)
@@ -58,6 +58,7 @@ Public Sub save_(ByVal line_sep As Integer)
 
   Call push_array(data, "data_type: define_elements")
   Call push_array(data, "version: " & Config.getVersion())
+  Call push_array(data, "create_at: " & Format(Now(), "yyyy-mm-ddThh:MM:ss+09:00"))
 
   Call push_array(data, "elements:")
   'elements出力
@@ -73,40 +74,3 @@ Public Sub save_(ByVal line_sep As Integer)
   
   Call text_io.plain_out(Config.SAVE_DATA, data, line_sep)
 End Sub
-
-'table_elements.yaml.出力
-Public Sub out_table_elements(ByVal line_sep As Integer)
-  Dim data() As String
-
-  'elements出力
-  Call elements.out_table(data)
-  'delive_elements出力
-  Call derive_elements.out_table(data)
-  
-  Call text_io.plain_out(Config.TABLE_ELEMENTS, data, line_sep)
-End Sub
-
-
-'api_elements.yaml.出力
-Public Sub out_api_elements(ByVal line_sep As Integer)
-  Dim data() As String
-
-  'elements出力
-  Call elements.out_api(data)
-  
-  Call text_io.plain_out(Config.API_ELEMENTS, data, line_sep)
-End Sub
-
-
-'types_ddl.出力
-Public Sub out_type_ddl(ByVal line_sep As Integer)
-  Dim data() As String
-  Call push_array(data, "-- Enum Type DDL")
-  Call push_array(data, "")
-
-  'elements出力
-  Call elements.out_type_ddl(data)
-  
-  Call text_io.plain_out(Config.TYPES_DDL, data, line_sep)
-End Sub
-

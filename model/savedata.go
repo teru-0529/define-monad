@@ -6,6 +6,7 @@ import (
 	"os"
 	"slices"
 	"strconv"
+	"time"
 
 	"github.com/teru-0529/define-monad/store"
 	"gopkg.in/yaml.v3"
@@ -32,6 +33,7 @@ var (
 type SaveData struct {
 	DataType       string          `yaml:"data_type"`
 	Version        string          `yaml:"version"`
+	CreateAt       time.Time       `yaml:"create_at"`
 	Elements       []Element       `yaml:"elements"`
 	DeliveElements []DeliveElement `yaml:"delive_elements"`
 	Segments       []Segment       `yaml:"segments"`
@@ -112,6 +114,12 @@ func (savedata *SaveData) getElement(nameJp string) (*Element, error) {
 
 // yamlファイルの書き込み
 func (savedata *SaveData) Write(path string) error {
+
+	// INFO: taimusutampの取得
+	layout := time.RFC3339
+	t, _ := time.Parse(layout, time.Now().Format(layout))
+	savedata.CreateAt = t
+
 	// INFO: Encoderの取得
 	encoder, cleanup, err := store.NewYamlEncorder(path)
 	if err != nil {
