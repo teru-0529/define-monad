@@ -63,6 +63,10 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 
   '// view用のtsvファイルを保存したyamlファイルから生成(golang呼び出し)
   outerExec ("view -D " & SAVE_DATA & " -O " & VIEW_DIR)
+
+  '// Excelファイルの出力
+  'MsgBox outerExec("save -E " & ThisWorkbook.FullName)
+
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   Application.ScreenUpdating = True
   Application.StatusBar = False
