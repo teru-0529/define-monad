@@ -52,23 +52,20 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  '// Excelファイルの出力
-  'Call outerExec("save -E " & ThisWorkbook.FullName)
+  '// Yamlファイルの出力
   Call outerExec("save -D " & SAVE_DATA & " -E " & ThisWorkbook.FullName)
-  '業務ロジック
-  'Call read_write_files.save_(adLF)
 
   '// テーブル定義用要素を保存したyamlファイルから生成(golang呼び出し)
-  outerExec ("output -T db-element -D " & SAVE_DATA & " -F " & TABLE_ELEMENTS)
+  Call outerExec("output -T db-element -D " & SAVE_DATA & " -F " & TABLE_ELEMENTS)
 
   '// OpenAPI定義用要素を保存したyamlファイルから生成(golang呼び出し)
-  outerExec ("output -T api-element -D " & SAVE_DATA & " -F " & API_ELEMENTS)
+  Call outerExec("output -T api-element -D " & SAVE_DATA & " -F " & API_ELEMENTS)
 
   '// DB用Enum定義を保存したyamlファイルから生成(golang呼び出し)
-  outerExec ("output -T type-ddl -D " & SAVE_DATA & " -F " & TYPES_DDL)
+  Call outerExec("output -T type-ddl -D " & SAVE_DATA & " -F " & TYPES_DDL)
 
   '// view用のtsvファイルを保存したyamlファイルから生成(golang呼び出し)
-  outerExec ("view -D " & SAVE_DATA & " -O " & VIEW_DIR)
+  Call outerExec("view -D " & SAVE_DATA & " -O " & VIEW_DIR)
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   Application.ScreenUpdating = True
   Application.StatusBar = False
