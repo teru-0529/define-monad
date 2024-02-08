@@ -19,11 +19,14 @@ Private Sub Workbook_Open()
 
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  '業務ロジック
-  Call work.element_reflesh '項目リストの最新化
-  Call work.segment_reflesh '区分値リストの最新化
-
-  Call read_write_files.load_(adLF)
+  '// 読込み
+  Call elements.load(outerExec("load -S elements -D " & SAVE_DATA))
+  Call derive_elements.load(outerExec("load -S derive-elements -D " & SAVE_DATA))
+  Call segments.load(outerExec("load -S segments -D " & SAVE_DATA))
+  
+  '// 項目リスト/区分値リスト最新化
+  Call work.element_reflesh
+  Call work.segment_reflesh
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   Application.ScreenUpdating = True
   Application.StatusBar = False
@@ -49,20 +52,20 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  '業務ロジック
-  Call read_write_files.save_(adLF)
+  '// Yamlファイルの出力
+  Call outerExec("save -D " & SAVE_DATA & " -E " & ThisWorkbook.FullName)
 
   '// テーブル定義用要素を保存したyamlファイルから生成(golang呼び出し)
-  outerExec ("output -T db-element -D " & SAVE_DATA & " -F " & TABLE_ELEMENTS)
+  Call outerExec("output -T db-element -D " & SAVE_DATA & " -F " & TABLE_ELEMENTS)
 
   '// OpenAPI定義用要素を保存したyamlファイルから生成(golang呼び出し)
-  outerExec ("output -T api-element -D " & SAVE_DATA & " -F " & API_ELEMENTS)
+  Call outerExec("output -T api-element -D " & SAVE_DATA & " -F " & API_ELEMENTS)
 
   '// DB用Enum定義を保存したyamlファイルから生成(golang呼び出し)
-  outerExec ("output -T type-ddl -D " & SAVE_DATA & " -F " & TYPES_DDL)
+  Call outerExec("output -T type-ddl -D " & SAVE_DATA & " -F " & TYPES_DDL)
 
   '// view用のtsvファイルを保存したyamlファイルから生成(golang呼び出し)
-  outerExec ("view -D " & SAVE_DATA & " -O " & VIEW_DIR)
+  Call outerExec("view -D " & SAVE_DATA & " -O " & VIEW_DIR)
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   Application.ScreenUpdating = True
   Application.StatusBar = False

@@ -115,6 +115,8 @@ func (savedata *SaveData) getElement(nameJp string) (*Element, error) {
 // yamlファイルの書き込み
 func (savedata *SaveData) Write(path string) error {
 
+	savedata.DataType = "define_elements"
+
 	// INFO: taimusutampの取得
 	layout := time.RFC3339
 	t, _ := time.Parse(layout, time.Now().Format(layout))

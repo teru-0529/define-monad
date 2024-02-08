@@ -98,6 +98,60 @@ ENDUP:
 
 End Sub
 
+'// データLoad(From yaml)
+Public Sub load(ByVal data As String)
+  Dim records() As String, items() As String
+  Dim i As Long, rowLength As Long
+
+  '// 初期化
+  Call init
+
+  '// 行ごとのデータに分割
+  records = Split(data, vbLf)
+  rowLength = UBound(records)
+  ReDim wkRange1(rowLength - 1, 1)
+  ReDim wkRange2(rowLength - 1, 7)
+
+  '// 列ごとの配列に変換
+  For i = 0 To rowLength - 1
+    items = Split(records(i), vbTab)
+
+    wkRange1(i, 0) = items(0)  '名称_和
+    wkRange1(i, 1) = items(1)  '名称_英
+
+    wkRange2(i, 0) = items(2)  'ドメイン
+    wkRange2(i, 1) = items(3)  '正規表現
+    wkRange2(i, 2) = items(4)  '最小桁数
+    wkRange2(i, 3) = items(5)  '最大桁数
+    wkRange2(i, 4) = items(6)  '最小値
+    wkRange2(i, 5) = items(7)  '最大値
+    wkRange2(i, 6) = items(8)  '例
+    wkRange2(i, 7) = items(9)  '説明
+  Next i
+
+  '// 値セット
+  Cells(2, col_no.項目名J).Resize(rowLength, 2) = wkRange1
+  Cells(2, col_no.ドメイン).Resize(rowLength, 8) = wkRange2
+
+  '// フォーマット
+  Call format2
+End Sub
+
+'// 初期化(データ消去)
+Public Sub init()
+  '初期行以降をクリア
+  UsedRange.Offset(1).Clear
+  Columns(col_no.API例).NumberFormatLocal = "@"
+End Sub
+
+'// フォーマット TODO:リネーム
+Public Sub format2()
+  Dim row_length As Long: row_length = Cells(rows.Count, "A").End(xlUp).Row - 1
+  
+  Call init_format(2, row_length)
+  Call format_domain_type(Cells(2, col_no.ドメイン).Resize(row_length), False)
+End Sub
+
 'フォーマット初期化
 Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
   Application.EnableEvents = False
@@ -105,9 +159,6 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
   Dim f_rows As Integer: f_rows = rows + ADDED_ROWS 'フォーマット化行数(ADDED_ROWS分多めにフォーマット)
   Dim cond_format As FormatCondition
 
-  '初期行以降をクリア
-  UsedRange.Offset(start_row - 1).Clear
-  
   '枠線
   With Cells(start_row, 1).Resize(f_rows, MAX_COL)
     .Borders.LineStyle = xlContinuous
@@ -319,95 +370,4 @@ Public Function get_val(ByVal name As String, ByVal col As Integer, ByVal def_va
   
   End If
   
-End Function
-
-
-'■■■■■↓IO　■■■■■
-
-'save_data読込
-'// FIXME:★★★★Refactering to Backend
-Public Sub load_(ByRef data() As String)
-  Const PARAMS = 10
-  Dim row_length As Long: row_length = (UBound(data) + 1) / PARAMS
-  Dim i As Long
-  ReDim wk_range_1(row_length - 1, 1)
-  ReDim wk_range_2(row_length - 1, 7)
-  
-  '描画箇所のフォーマット
-  Call init_format(2, row_length)
-  
-  For i = 0 To row_length - 1
-    wk_range_1(i, 0) = from_yaml(data(i * PARAMS + 0))  '名称_和
-    wk_range_1(i, 1) = from_yaml(data(i * PARAMS + 1))  '名称_英
-    
-    wk_range_2(i, 0) = from_yaml(data(i * PARAMS + 2))  'ドメイン
-    wk_range_2(i, 1) = from_yaml(data(i * PARAMS + 3))  '正規表現
-    wk_range_2(i, 2) = from_yaml(data(i * PARAMS + 4))  '最小桁数
-    wk_range_2(i, 3) = from_yaml(data(i * PARAMS + 5))  '最大桁数
-    wk_range_2(i, 4) = from_yaml(data(i * PARAMS + 6))  '最小値
-    wk_range_2(i, 5) = from_yaml(data(i * PARAMS + 7))  '最大値
-    wk_range_2(i, 6) = exampleValueFrom(from_yaml(data(i * PARAMS + 8)), from_yaml(data(i * PARAMS + 2)))       '例
-    wk_range_2(i, 7) = from_yaml(data(i * PARAMS + 9))  '説明
-  Next i
-  
-  '値セット
-  Cells(2, col_no.項目名J).Resize(row_length, 2) = wk_range_1
-  Cells(2, col_no.ドメイン).Resize(row_length, 8) = wk_range_2
-  
-  'format
-  Call format_domain_type(Cells(2, col_no.ドメイン).Resize(row_length), False)
- 
-End Sub
-
-'Exampleが文字列かどうか
-Function exampleValueFrom(ByVal val As Variant, ByVal domain As String) As Variant
-  Dim length As Integer
-  
-  If domain = "日付" Or domain = "時間" Or (domain = "NOKEY" And val Like """[0-9]*""") Then
-    length = Len(val)
-    If Left(val, 1) = """" And Right(val, 1) = """" Then
-      exampleValueFrom = Mid(val, 2, length - 2)
-    Else
-      exampleValueFrom = val
-    End If
-  Else
-    exampleValueFrom = val
-  End If
-End Function
-
-'save_data書込
-'// FIXME:★★★★Refactering to Backend
-Public Sub save_(ByRef data() As String)
-  Dim elm As Range
-  
-  For Each elm In UsedRange.Resize(, 1).Offset(1)
-    If elm.value <> "" Then Call save_item(data, elm)
-  Next elm
-  
-End Sub
-
-'// FIXME:★★★★Refactering to Backend
-Private Sub save_item(ByRef data() As String, ByVal elm As Range)
-  Dim i As Long: i = elm.Row
-  
-  Call push_array(data, indent(1) & "- " & to_yaml("name_jp", Cells(i, col_no.項目名J).value))
-  Call push_array(data, indent(2) & to_yaml("name_en", Cells(i, col_no.項目名EC).value))
-  Call push_array(data, indent(2) & to_yaml("domain", Cells(i, col_no.ドメイン).value))
-  Call push_array(data, indent(2) & to_yaml("reg_ex", Cells(i, col_no.正規表現).value))
-  Call push_array(data, indent(2) & to_yaml("min_digits", Cells(i, col_no.最小桁数).value))
-  Call push_array(data, indent(2) & to_yaml("max_digits", Cells(i, col_no.最大桁数).value))
-  Call push_array(data, indent(2) & to_yaml("min_value", Cells(i, col_no.最小値).value))
-  Call push_array(data, indent(2) & to_yaml("max_value", Cells(i, col_no.最大値).value))
-  Call push_array(data, indent(2) & to_yaml("example", exampleValueTo(Cells(i, col_no.API例).value, Cells(i, col_no.ドメイン).value)))
-  Call push_array(data, indent(2) & to_yaml("description", Cells(i, col_no.説明).value))
-End Sub
-
-'Exampleが文字列かどうか
-Function exampleValueTo(ByVal val As Variant, ByVal domain As String) As Variant
-  If domain = "日付" Or domain = "時間" Or (domain = "NOKEY" And val Like "[0-9]*") Then
-    exampleValueTo = """" & val & """"
-  Else
-    exampleValueTo = val
-  End If
-
 End Function

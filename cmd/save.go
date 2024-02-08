@@ -5,8 +5,10 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"github.com/teru-0529/define-monad/model"
 )
 
 // saveCmd represents the save command
@@ -14,9 +16,20 @@ var saveCmd = &cobra.Command{
 	Use:   "save",
 	Short: "Get savedata from excel sheet and write yaml.",
 	Long:  "Get savedata from excel sheet and write yaml.",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(savedataPath)
+	RunE: func(cmd *cobra.Command, args []string) error {
+
+		monad, err := model.FromExcel(excelPath)
+		if err != nil {
+			return err
+		}
+
+		monad.Version = version
+		monad.Write(savedataPath)
+
+		fmt.Printf("input excel file: [%s]\n", filepath.ToSlash(filepath.Clean(excelPath)))
+		fmt.Printf("output yaml file: [%s]\n", filepath.ToSlash(filepath.Clean(savedataPath)))
 		fmt.Println("***command[save] completed.")
+		return nil
 	},
 }
 

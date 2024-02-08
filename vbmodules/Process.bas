@@ -35,11 +35,13 @@ Public Function outerExec(ByVal param As String) As String
 
   Debug.Print "[outerExec] exec: " & CLI_FILE & " " & param
   outerExec = SystemAccessor.GetCommandResult(cliPath & " " & param)
+  Debug.Print outerExec
 
 FINALLY:
   Call Util.showTime(Timer - startTime)
   Set FSO = Nothing
   Debug.Print "|----|---- outer exec end ----|----|"
+  Debug.Print ""
 
 End Function
 

@@ -4,6 +4,9 @@ Option Explicit
 '// 開発モードの場合にTrue（リリース時はFalseで出荷する）
 Public Const IS_DEVELOP_MODE = True
 
+'// フォーマット追加行数（書式の設定を行う追加行数）
+Public Const ADDED_ROWS = 30
+
 '// iniファイル読込み用関数定義
 Declare PtrSafe Function GetPrivateProfileString Lib _
     "kernel32" Alias "GetPrivateProfileStringA" ( _
