@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/teru-0529/define-monad/model"
@@ -26,6 +27,8 @@ var saveCmd = &cobra.Command{
 		// fmt.Println(monad)
 		monad.Write("./monad.yaml") // FIXME:最終的にはsavedataに書き出す
 
+		fmt.Printf("input excel file: [%s]\n", filepath.ToSlash(filepath.Clean(excelPath)))
+		fmt.Printf("output yaml file: [%s]\n", filepath.ToSlash(filepath.Clean(savedataPath)))
 		fmt.Println("***command[save] completed.")
 		return nil
 	},
