@@ -102,6 +102,15 @@ End Sub
 Public Sub init()
   '初期行以降をクリア
   UsedRange.Offset(1).Clear
+  Columns(col_no.API例).NumberFormatLocal = "@"
+End Sub
+
+'// フォーマット TODO:リネーム
+Public Sub format2()
+  Dim row_length As Long: row_length = Cells(rows.Count, "A").End(xlUp).Row - 1
+  
+  Call init_format(2, row_length)
+  Call format_domain_type(Cells(2, col_no.ドメイン).Resize(row_length), False)
 End Sub
 
 'フォーマット初期化
@@ -336,8 +345,7 @@ Public Sub load_(ByRef data() As String)
   ReDim wk_range_1(row_length - 1, 1)
   ReDim wk_range_2(row_length - 1, 7)
   
-  '描画箇所のフォーマット
-  Call init
+  'Cells(2, col_no.API例).Resize(row_length).NumberFormatLocal = "@"
   
   For i = 0 To row_length - 1
     wk_range_1(i, 0) = from_yaml(data(i * PARAMS + 0))  '名称_和
@@ -356,11 +364,6 @@ Public Sub load_(ByRef data() As String)
   '値セット
   Cells(2, col_no.項目名J).Resize(row_length, 2) = wk_range_1
   Cells(2, col_no.ドメイン).Resize(row_length, 8) = wk_range_2
-  
-  'format
-  Call init_format(2, row_length)
-  Call format_domain_type(Cells(2, col_no.ドメイン).Resize(row_length), False)
- 
 End Sub
 
 'Exampleが文字列かどうか

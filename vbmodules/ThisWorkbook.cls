@@ -19,11 +19,21 @@ Private Sub Workbook_Open()
 
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  '業務ロジック
-  Call work.element_reflesh '項目リストの最新化
-  Call work.segment_reflesh '区分値リストの最新化
-
+  '// 初期化
+  Call elements.init
+  Call derive_elements.init
+  Call segments.init
+  
   Call read_write_files.load_(adLF)
+  
+  '// フォーマット
+  Call elements.format2
+  Call derive_elements.format2
+  Call segments.format2
+    
+  '// 項目リスト/区分値リスト最新化
+  Call work.element_reflesh
+  Call work.segment_reflesh
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   Application.ScreenUpdating = True
   Application.StatusBar = False

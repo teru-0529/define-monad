@@ -40,6 +40,13 @@ Public Sub init()
   UsedRange.Offset(1).Clear
 End Sub
 
+'// フォーマット TODO:リネーム
+Public Sub format2()
+  Dim row_length As Long: row_length = Cells(rows.Count, "A").End(xlUp).Row - 1
+  
+  Call init_format(2, row_length)
+End Sub
+
 'フォーマット初期化
 Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
   Application.EnableEvents = False
@@ -95,9 +102,6 @@ Public Sub load_(ByRef data() As String)
   Dim i As Long
   ReDim wk_range_1(row_length - 1, 3)
   
-  '描画箇所のフォーマット
-  Call init
-  
   For i = 0 To row_length - 1
     wk_range_1(i, 0) = from_yaml(data(i * PARAMS + 0)) '項目名
     wk_range_1(i, 1) = from_yaml(data(i * PARAMS + 1)) '区分値
@@ -107,9 +111,6 @@ Public Sub load_(ByRef data() As String)
   
   '値セット
   Cells(2, col_no.項目名J).Resize(row_length, 4) = wk_range_1
-
-  'format
-  Call init_format(2, row_length)
 End Sub
 
 'save_data書込
