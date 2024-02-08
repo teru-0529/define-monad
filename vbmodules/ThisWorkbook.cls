@@ -19,18 +19,11 @@ Private Sub Workbook_Open()
 
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  '// 初期化
-  Call elements.init
-  Call derive_elements.init
-  Call segments.init
+  '// 読込み
+  Call elements.load(outerExec("load -S elements -D " & SAVE_DATA))
+  Call derive_elements.load(outerExec("load -S derive-elements -D " & SAVE_DATA))
+  Call segments.load(outerExec("load -S segments -D " & SAVE_DATA))
   
-  Call read_write_files.load_(adLF)
-  
-  '// フォーマット
-  Call elements.format2
-  Call derive_elements.format2
-  Call segments.format2
-    
   '// 項目リスト/区分値リスト最新化
   Call work.element_reflesh
   Call work.segment_reflesh
@@ -59,8 +52,11 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  '// Excelファイルの出力
+  'Call outerExec("save -E " & ThisWorkbook.FullName)
+  Call outerExec("save -D " & SAVE_DATA & " -E " & ThisWorkbook.FullName)
   '業務ロジック
-  Call read_write_files.save_(adLF)
+  'Call read_write_files.save_(adLF)
 
   '// テーブル定義用要素を保存したyamlファイルから生成(golang呼び出し)
   outerExec ("output -T db-element -D " & SAVE_DATA & " -F " & TABLE_ELEMENTS)
@@ -73,10 +69,6 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 
   '// view用のtsvファイルを保存したyamlファイルから生成(golang呼び出し)
   outerExec ("view -D " & SAVE_DATA & " -O " & VIEW_DIR)
-
-  '// Excelファイルの出力
-  'MsgBox outerExec("save -E " & ThisWorkbook.FullName)
-
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   Application.ScreenUpdating = True
   Application.StatusBar = False

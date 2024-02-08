@@ -24,8 +24,7 @@ var saveCmd = &cobra.Command{
 		}
 
 		monad.Version = version
-		// fmt.Println(monad)
-		monad.Write("./monad.yaml") // FIXME:最終的にはsavedataに書き出す
+		monad.Write(savedataPath)
 
 		fmt.Printf("input excel file: [%s]\n", filepath.ToSlash(filepath.Clean(excelPath)))
 		fmt.Printf("output yaml file: [%s]\n", filepath.ToSlash(filepath.Clean(savedataPath)))

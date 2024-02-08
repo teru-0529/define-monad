@@ -19,13 +19,13 @@ Public Sub load_(ByVal line_sep As Integer)
   For i = 4 To (s1 - 1)
     Call push_array(elements_d, data(i))
   Next i
-  Call elements.load_(elements_d)
+  'Call elements.load_(elements_d)
   
   'delive_elements“ü—Í
   For i = (s1 + 1) To (s2 - 1)
     Call push_array(derive_elements_d, data(i))
   Next i
-  Call derive_elements.load_(derive_elements_d)
+  'Call derive_elements.load_(derive_elements_d)
 
   'segments“ü—Í
   For i = (s2 + 1) To UBound(data)

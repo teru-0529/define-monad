@@ -35,6 +35,39 @@ Public Sub replace_element_name(ByVal old_val As String, ByVal new_val As String
   UsedRange.Resize(, 1).Replace what:=old_val, replacement:=new_val
 End Sub
 
+'// データLoad(From yaml)
+Public Sub load(ByVal data As String)
+  Dim records() As String, items() As String
+  Dim i As Long, rowLength As Long
+
+  '// 初期化
+  Call init
+
+  '// 行ごとのデータに分割
+  records = Split(data, vbLf)
+  rowLength = UBound(records)
+  ReDim wkRange1(rowLength - 1, 2)
+  ReDim wkRange2(rowLength - 1, 0)
+
+  '// 列ごとの配列に変換
+  For i = 0 To rowLength - 1
+    items = Split(records(i), vbTab)
+
+    wkRange1(i, 0) = items(0)  '派生元
+    wkRange1(i, 1) = items(1)  '名称_和
+    wkRange1(i, 2) = items(2)  '名称_英
+
+    wkRange2(i, 0) = items(3)  '説明
+  Next i
+
+  '// 値セット
+  Cells(2, col_no.派生元項目名).Resize(rowLength, 3) = wkRange1
+  Cells(2, col_no.説明).Resize(rowLength) = wkRange2
+
+  '// フォーマット
+  Call format2
+End Sub
+
 '// 初期化(データ消去)
 Public Sub init()
   '初期行以降をクリア

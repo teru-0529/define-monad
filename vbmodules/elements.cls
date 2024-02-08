@@ -98,6 +98,45 @@ ENDUP:
 
 End Sub
 
+'// データLoad(From yaml)
+Public Sub load(ByVal data As String)
+  Dim records() As String, items() As String
+  Dim i As Long, rowLength As Long
+
+  '// 初期化
+  Call init
+
+  '// 行ごとのデータに分割
+  records = Split(data, vbLf)
+  rowLength = UBound(records)
+  ReDim wkRange1(rowLength - 1, 1)
+  ReDim wkRange2(rowLength - 1, 7)
+
+  '// 列ごとの配列に変換
+  For i = 0 To rowLength - 1
+    items = Split(records(i), vbTab)
+
+    wkRange1(i, 0) = items(0)  '名称_和
+    wkRange1(i, 1) = items(1)  '名称_英
+
+    wkRange2(i, 0) = items(2)  'ドメイン
+    wkRange2(i, 1) = items(3)  '正規表現
+    wkRange2(i, 2) = items(4)  '最小桁数
+    wkRange2(i, 3) = items(5)  '最大桁数
+    wkRange2(i, 4) = items(6)  '最小値
+    wkRange2(i, 5) = items(7)  '最大値
+    wkRange2(i, 6) = items(8)  '例
+    wkRange2(i, 7) = items(9)  '説明
+  Next i
+
+  '// 値セット
+  Cells(2, col_no.項目名J).Resize(rowLength, 2) = wkRange1
+  Cells(2, col_no.ドメイン).Resize(rowLength, 8) = wkRange2
+
+  '// フォーマット
+  Call format2
+End Sub
+
 '// 初期化(データ消去)
 Public Sub init()
   '初期行以降をクリア
