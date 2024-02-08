@@ -34,6 +34,11 @@ Public Sub replace_element_name(ByVal old_val As String, ByVal new_val As String
   UsedRange.Resize(, 1).Replace what:=old_val, replacement:=new_val
 End Sub
 
+'// 初期化(データ消去)
+Public Sub init()
+  '初期行以降をクリア
+  UsedRange.Offset(1).Clear
+End Sub
 
 'フォーマット初期化
 Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
@@ -42,9 +47,6 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
   Dim f_rows As Integer: f_rows = rows + ADDED_ROWS 'フォーマット化行数(ADDED_ROWS分多めにフォーマット)
   Dim cond_format_1 As FormatCondition, cond_format_2 As FormatCondition
 
-  '初期行以降をクリア
-  UsedRange.Offset(start_row - 1).Clear
-  
   '枠線
   With Cells(start_row, 1).Resize(f_rows, MAX_COL)
     .Borders.LineStyle = xlContinuous
@@ -94,7 +96,7 @@ Public Sub load_(ByRef data() As String)
   ReDim wk_range_1(row_length - 1, 3)
   
   '描画箇所のフォーマット
-  Call init_format(2, row_length)
+  Call init
   
   For i = 0 To row_length - 1
     wk_range_1(i, 0) = from_yaml(data(i * PARAMS + 0)) '項目名
@@ -105,6 +107,9 @@ Public Sub load_(ByRef data() As String)
   
   '値セット
   Cells(2, col_no.項目名J).Resize(row_length, 4) = wk_range_1
+
+  'format
+  Call init_format(2, row_length)
 End Sub
 
 'save_data書込
