@@ -21,10 +21,8 @@ End Enum
 Private Sub Worksheet_Activate()
   Call work.segment_reflesh '区分値リストの最新化
   
+  '// フォーマット
   Call areaFormat
-
-  Dim start_row As Integer: start_row = Cells(rows.Count, "A").End(xlUp).Row
-  Call init_format(start_row + 1, 0)
 End Sub
 
 '項目名の変更追随
