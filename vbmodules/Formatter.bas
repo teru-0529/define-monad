@@ -45,6 +45,11 @@ Sub setFunction(ByRef area As Range, ByVal formula As String)
   area.Interior.Color = RGB(255, 255, 213) 'CREAM
 End Sub
 
+'// 表示形式
+Sub formatLocal(ByRef area As Range, ByVal formula As String)
+  area.NumberFormatLocal = formula
+End Sub
+
 '// IMEモード
 Sub imeMode(ByRef area As Range, ByVal mode As Boolean)
   With area.Validation

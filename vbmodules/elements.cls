@@ -49,8 +49,8 @@ Dim val As Variant '変更前の仮値
 
 'シート選択時
 Private Sub Worksheet_Activate()
-  Dim start_row As Integer: start_row = Cells(rows.Count, "A").End(xlUp).Row
-  Call init_format(start_row + 1, 0)
+  '// フォーマット
+  Call areaFormat
 End Sub
 
 'セルの選択イベント
@@ -140,63 +140,35 @@ End Sub
 Public Sub format2()
   Dim row_length As Long: row_length = Cells(rows.Count, "A").End(xlUp).Row - 1
   
-  Call init_format(2, row_length)
+  Call areaFormat
   Call format_domain_type(Cells(2, col_no.ドメイン).Resize(row_length), False)
 End Sub
 
 'フォーマット初期化
-Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
+Public Sub areaFormat()
   Application.EnableEvents = False
-  
-  Dim f_rows As Integer: f_rows = rows + ADDED_ROWS 'フォーマット化行数(ADDED_ROWS分多めにフォーマット)
-  Dim cond_format As FormatCondition
 
-  '枠線
-  With Cells(start_row, 1).Resize(f_rows, MAX_COL)
-    .Borders.LineStyle = xlContinuous
-    .Borders.Color = RGB(68, 114, 196) 'DEEP_BLUE
-    .Borders(xlEdgeTop).Color = RGB(189, 215, 238) 'WEAK_BLUE
-    .Borders(xlInsideHorizontal).Color = RGB(189, 215, 238) 'WEAK_BLUE
-    .Font.Size = 9
-  End With
+  '// 枠線
+  Call Formatter.borderAndFontsize(Range("ELEM_FULL"))
+  
+  '// リスト選択
+  Call Formatter.listSelect(Range("ELEM_D"), "ドメインタイプKEY")
+  
+  '// 関数
+  Call Formatter.setFunction(Range("ELEM_C"), "=camel2snake(RC[-1])")
+  Call Formatter.setFunction(Range("ELEM_L"), "=countif(派生元項目KEY,RC[-11])")
+  Call Formatter.setFunction(Range("ELEM_M"), "=countif(区分値項目KEY,RC[-12])")
 
-  '背景色
-  Union(Cells(start_row, col_no.項目名ES).Resize(f_rows), Cells(start_row, col_no.種類数).Resize(f_rows, 2)).Interior.Color = RGB(255, 255, 213) 'CREAM
+  '// 表示形式
+  Call Formatter.formatLocal(Union(Range("ELEM_L"), Range("ELEM_M")), "0_;;;")
+    
+  '// 条件付き書式
+  Call Formatter.conditionFormat(Union(Range("ELEM_B"), Range("ELEM_D"), Range("ELEM_J"), Range("ELEM_K")), "=AND(RC1<>"""",RC="""")")
   
-  '入力規則
-  With Cells(start_row, col_no.ドメイン).Resize(f_rows).Validation
-    .Delete
-    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=ドメインタイプKEY"
-  End With
+  '// IMEモード
+  Call Formatter.imeMode(Union(Range("ELEM_A"), Range("ELEM_K")), Formatter.IME_MODE_ON)
+  Call Formatter.imeMode(Range("ELEM_B"), Formatter.IME_MODE_OFF)
 
-  '関数
-  Cells(start_row, col_no.項目名ES).Resize(f_rows).formula = "=camel2snake(RC[-1])"
-  Cells(start_row, col_no.種類数).Resize(f_rows).formula = "=countif(派生元項目KEY,RC[-11])"
-  Cells(start_row, col_no.区分値数).Resize(f_rows).formula = "=countif(区分値項目KEY,RC[-12])"
-
-  '表示形式
-  'Cells(start_row, col_no.API例).Resize(f_rows).NumberFormatLocal = "@"
-  Union(Cells(start_row, col_no.種類数).Resize(f_rows), Cells(start_row, col_no.区分値数).Resize(f_rows)).NumberFormatLocal = "0_;;;"
-
-  
-  '条件付き書式
-  Set cond_format = Union(Cells(start_row, col_no.項目名EC).Resize(f_rows), Cells(start_row, col_no.ドメイン).Resize(f_rows), _
-   Cells(start_row, col_no.API例).Resize(f_rows), Cells(start_row, col_no.説明).Resize(f_rows)).FormatConditions.Add(Type:=xlExpression, Formula1:="=AND(RC1<>"""",RC="""")")
-  cond_format.Interior.Color = work.Range("入力必須").Interior.Color
-  
-  'IMEモード
-  With Union(Cells(start_row, col_no.項目名J).Resize(f_rows), Cells(start_row, col_no.説明).Resize(f_rows)).Validation
-    .Delete
-    .Add Type:=xlValidateInputOnly
-    .imeMode = xlIMEModeOn
-  End With
-  With Cells(start_row, col_no.項目名EC).Resize(f_rows).Validation
-    .Delete
-    .Add Type:=xlValidateInputOnly
-    .imeMode = xlIMEModeOff
-  End With
-  
-  
   Application.EnableEvents = True
 End Sub
 
