@@ -102,7 +102,8 @@ Public Sub load(ByVal data As String)
   Dim i As Long, rowLength As Long
 
   '// 初期化
-  Call init
+  UsedRange.Offset(1).Clear
+  Columns(col_no.API例).NumberFormatLocal = "@"
 
   '// 行ごとのデータに分割
   records = Split(data, vbLf)
@@ -133,13 +134,6 @@ Public Sub load(ByVal data As String)
 
   '// フォーマット
   Call format2
-End Sub
-
-'// 初期化(データ消去)
-Public Sub init()
-  '初期行以降をクリア
-  UsedRange.Offset(1).Clear
-  Columns(col_no.API例).NumberFormatLocal = "@"
 End Sub
 
 '// フォーマット TODO:リネーム

@@ -73,7 +73,7 @@ Public Sub areaFormat()
   '// 条件付き書式
   Call Formatter.conditionFormat(Union(Range("SEGM_B"), Range("SEGM_C"), Range("SEGM_D")), "=AND(RC1<>"""",RC="""")")
 
-  'IMEモード
+  '// IMEモード
   Call Formatter.imeMode(Union(Range("SEGM_C"), Range("SEGM_D")), Formatter.IME_MODE_ON)
   Call Formatter.imeMode(Range("SEGM_B"), Formatter.IME_MODE_OFF)
 

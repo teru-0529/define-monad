@@ -37,6 +37,14 @@ Sub conditionFormat(ByRef area As Range, ByVal formula As String)
   condFormat.Interior.Color = work.Range("エラー").Interior.Color
 End Sub
 
+'// 関数
+Sub setFunction(ByRef area As Range, ByVal formula As String)
+  '関数
+  area.formula = formula
+  '背景色
+  area.Interior.Color = RGB(255, 255, 213) 'CREAM
+End Sub
+
 '// IMEモード
 Sub imeMode(ByRef area As Range, ByVal mode As Boolean)
   With area.Validation
