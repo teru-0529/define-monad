@@ -61,7 +61,7 @@ Public Sub load(ByVal data As String)
 End Sub
 
 '// フォーマット
-Public Sub areaFormat()
+Private Sub areaFormat()
   Application.EnableEvents = False
 
   '// 枠線

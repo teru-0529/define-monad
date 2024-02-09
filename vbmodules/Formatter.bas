@@ -4,6 +4,21 @@ Option Explicit
 Public Const IME_MODE_ON = True
 Public Const IME_MODE_OFF = False
 
+'// リセット
+Sub reset(ByRef area As Range)
+  Application.EnableEvents = False
+  
+  With area
+    .ClearContents
+    .Interior.ColorIndex = xlNone
+    .Validation.Delete
+    .FormatConditions.Delete
+    .NumberFormatLocal = "G/標準"
+  End With
+  
+  Application.EnableEvents = True
+End Sub
+
 '// 枠線・文字サイズ
 Sub borderAndFontsize(ByRef area As Range)
   With area

@@ -30,6 +30,7 @@ Const MAX_COL = 13
 
 'デコレーション種類
 Private Enum decoration_type
+  なし = 0
   文字列 = 1
   桁数 = 2
   数値 = 3
@@ -91,6 +92,8 @@ ENDUP:
   'ドメインの変更の場合
   ElseIf Target.Column = col_no.ドメイン Then
     '値リセット
+    MsgBox 100
+    Call Formatter.reset(Target.Offset(, 1).Resize(, 5))
     Call format_domain_type(Target, True)
   End If
 
@@ -145,7 +148,7 @@ Public Sub format2()
 End Sub
 
 'フォーマット初期化
-Public Sub areaFormat()
+Private Sub areaFormat()
   Application.EnableEvents = False
 
   '// 枠線
@@ -180,57 +183,73 @@ Private Sub format_domain_type(ByVal Target As Range, ByVal is_reset As Boolean)
   Dim str_req As decolation_cells:  str_req.dec_type = decoration_type.文字列:  str_req.reqired = True
   Dim keta As decolation_cells:  keta.dec_type = decoration_type.桁数:  keta.reqired = False
   Dim keta_req As decolation_cells:  keta_req.dec_type = decoration_type.桁数:  keta_req.reqired = True
-  Dim num As decolation_cells:  num.dec_type = decoration_type.数値:  num.reqired = True
-  Dim bool As decolation_cells:  bool.dec_type = decoration_type.真偽値: bool.reqired = False
+  Dim num As decolation_cells:  num.dec_type = decoration_type.数値:  num.reqired = False
+  Dim none As decolation_cells:  none.dec_type = decoration_type.なし:  num.reqired = False
   
   Dim elm As Range
   Dim i As Long
   Dim dec As Integer
   
   '初期化（値リセット）
-  If is_reset Then Target.Offset(, 1).Resize(, 5).ClearContents
+  'If is_reset Then Target.Offset(, 1).Resize(, 5).ClearContents
   
   '行ごとにフォーマット対照を選別
   For Each elm In Target
+      
     i = elm.Row
-    
+
     '正規表現
-    dec = domain_types.get_val(elm.value, 7, -1)
-    If dec > 0 Then
+    dec = getStatus(elm.value, ITEM_REG_EX)
+    If dec = STATUS_REQUIRED Then
       Set str_req.dec_range = Util.union_range(str_req.dec_range, Cells(i, col_no.正規表現))
-    ElseIf dec < 0 Then
+    ElseIf dec = STATUS_ANY Then
+      Set str.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.正規表現))
+    ElseIf dec = STATUS_UNABLED Then
       Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.正規表現))
     Else
-      Set str.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.正規表現))
+      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.正規表現))
     End If
     'タイプ：時間の場合、正規表現を設定
     If elm.value = "時間" Then Cells(i, col_no.正規表現).value = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
-    
+
     '最小桁数
-    dec = domain_types.get_val(elm.value, 8, -1)
-    If dec > 0 Then
+    dec = getStatus(elm.value, ITEM_MIN_DIGITS)
+    If dec = STATUS_REQUIRED Then
       Set keta_req.dec_range = Util.union_range(keta_req.dec_range, Cells(i, col_no.最小桁数))
-    ElseIf dec < 0 Then
+    ElseIf dec = STATUS_ANY Then
+      Set keta.dec_range = Util.union_range(keta.dec_range, Cells(i, col_no.最小桁数))
+    ElseIf dec = STATUS_UNABLED Then
       Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最小桁数))
     Else
-      Set keta.dec_range = Util.union_range(keta.dec_range, Cells(i, col_no.最小桁数))
+      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.最小桁数))
     End If
     
     '最大桁数
-    dec = domain_types.get_val(elm.value, 9, -1)
-    If dec > 0 Then
+    dec = getStatus(elm.value, ITEM_MAX_DIGITS)
+    If dec = STATUS_REQUIRED Then
       Set keta_req.dec_range = Util.union_range(keta_req.dec_range, Cells(i, col_no.最大桁数))
-    ElseIf dec < 0 Then
+    ElseIf dec = STATUS_ANY Then
+      Set keta.dec_range = Util.union_range(keta.dec_range, Cells(i, col_no.最大桁数))
+    ElseIf dec = STATUS_UNABLED Then
       Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最大桁数))
+    Else
+      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.最大桁数))
     End If
-    
+
     '最小値/最大値
-    dec = domain_types.get_val(elm.value, 10, -1)
-    If dec > 0 Then
+    dec = getStatus(elm.value, ITEM_VALUE_RANGE)
+    If dec = STATUS_REQUIRED Then
       Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最小値))
       Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最大値))
-    ElseIf dec < 0 Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最小値).Resize(, 2))
+    ElseIf dec = STATUS_ANY Then
+      Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最小値))
+      Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最大値))
+    ElseIf dec = STATUS_UNABLED Then
+      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最小値))
+      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最大値))
+    Else
+      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.最小値))
+      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.最小値))
     End If
         
   Next elm
@@ -241,8 +260,8 @@ Private Sub format_domain_type(ByVal Target As Range, ByVal is_reset As Boolean)
   Call decoration(keta_req, is_reset)
   Call decoration(keta, is_reset)
   Call decoration(num, is_reset)
-  Call decoration(bool, is_reset)
   Call decoration(ng, is_reset)
+  Call decoration(none, is_reset)
 
 End Sub
 
@@ -306,6 +325,9 @@ Private Sub decoration(ByRef Target As decolation_cells, ByVal is_reset As Boole
       .Validation.imeMode = xlIMEModeOff
     
     End With
+  
+  ElseIf Target.dec_type = decoration_type.なし Then
+    Call Formatter.reset(Target.dec_range)
   End If
   
   '必須

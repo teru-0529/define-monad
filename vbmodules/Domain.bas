@@ -26,6 +26,7 @@ Option Explicit
   Public Const STATUS_REQUIRED = 1
   Public Const STATUS_ANY = 0
   Public Const STATUS_UNABLED = -1
+  Public Const STATUS_NONE = -99
 
 '// ä«óùçÄñ⁄ÇÃèÛë‘Çï‘Ç∑
 Public Function getStatus(ByVal Domain As String, ByVal item As String) As Long
@@ -103,7 +104,7 @@ Public Function getStatus(ByVal Domain As String, ByVal item As String) As Long
     End If
 
   Else
-    getStatus = STATUS_UNABLED
+    getStatus = STATUS_NONE
 
   End If
 End Function
