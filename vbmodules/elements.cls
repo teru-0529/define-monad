@@ -22,13 +22,11 @@ Private Enum col_no
   最大値 = 9
   API例 = 10
   説明 = 11
-  API型1 = 12
-  API型2 = 13
-  種類数 = 14
-  区分値数 = 15
+  種類数 = 12
+  区分値数 = 13
 End Enum
 
-Const MAX_COL = 15
+Const MAX_COL = 13
 
 'デコレーション種類
 Private Enum decoration_type
@@ -169,7 +167,7 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
   End With
 
   '背景色
-  Union(Cells(start_row, col_no.項目名ES).Resize(f_rows), Cells(start_row, col_no.API型1).Resize(f_rows, 4)).Interior.Color = RGB(255, 255, 213) 'CREAM
+  Union(Cells(start_row, col_no.項目名ES).Resize(f_rows), Cells(start_row, col_no.種類数).Resize(f_rows, 2)).Interior.Color = RGB(255, 255, 213) 'CREAM
   
   '入力規則
   With Cells(start_row, col_no.ドメイン).Resize(f_rows).Validation
@@ -179,13 +177,11 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
 
   '関数
   Cells(start_row, col_no.項目名ES).Resize(f_rows).Formula = "=camel2snake(RC[-1])"
-  Cells(start_row, col_no.API型1).Resize(f_rows).Formula = "=iferror(vlookup(RC[-8],ドメインタイプDATA,6,False)&"""","""")"
-  Cells(start_row, col_no.API型2).Resize(f_rows).Formula = "=iferror(vlookup(RC[-9],ドメインタイプDATA,7,False)&"""","""")"
-  Cells(start_row, col_no.種類数).Resize(f_rows).Formula = "=countif(派生元項目KEY,RC[-13])"
-  Cells(start_row, col_no.区分値数).Resize(f_rows).Formula = "=countif(区分値項目KEY,RC[-14])"
+  Cells(start_row, col_no.種類数).Resize(f_rows).Formula = "=countif(派生元項目KEY,RC[-11])"
+  Cells(start_row, col_no.区分値数).Resize(f_rows).Formula = "=countif(区分値項目KEY,RC[-12])"
 
   '表示形式
-  Cells(start_row, col_no.API例).Resize(f_rows).NumberFormatLocal = "@"
+  'Cells(start_row, col_no.API例).Resize(f_rows).NumberFormatLocal = "@"
   Union(Cells(start_row, col_no.種類数).Resize(f_rows), Cells(start_row, col_no.区分値数).Resize(f_rows)).NumberFormatLocal = "0_;;;"
 
   
