@@ -66,7 +66,7 @@ Public Sub load(ByVal data As String)
   Call areaFormat
 End Sub
 
-'フォーマット初期化
+'フォーマット
 Private Sub areaFormat()
   Application.EnableEvents = False
 
@@ -80,7 +80,7 @@ Private Sub areaFormat()
   Call Formatter.setFunction(Range("DERI_D"), "=camel2snake(RC[-1])")
 
   '// 条件付き書式
-  Call Formatter.conditionFormat(Union(Range("DERI_B"), Range("DERI_E"), Range("DERI_C")), "=AND(RC1<>"""",RC="""")")
+  Call Formatter.condFunction(Union(Range("DERI_B"), Range("DERI_E"), Range("DERI_C")), "=AND(RC1<>"""",RC="""")")
 
   '// IMEモード
   Call Formatter.imeMode(Union(Range("DERI_B"), Range("DERI_E")), Formatter.IME_MODE_ON)

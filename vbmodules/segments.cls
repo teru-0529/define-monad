@@ -71,7 +71,7 @@ Private Sub areaFormat()
   Call Formatter.listSelect(Range("SEGM_A"), "区分値リスト")
 
   '// 条件付き書式
-  Call Formatter.conditionFormat(Union(Range("SEGM_B"), Range("SEGM_C"), Range("SEGM_D")), "=AND(RC1<>"""",RC="""")")
+  Call Formatter.condFunction(Union(Range("SEGM_B"), Range("SEGM_C"), Range("SEGM_D")), "=AND(RC1<>"""",RC="""")")
 
   '// IMEモード
   Call Formatter.imeMode(Union(Range("SEGM_C"), Range("SEGM_D")), Formatter.IME_MODE_ON)

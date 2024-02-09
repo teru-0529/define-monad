@@ -6,17 +6,12 @@ Public Const IME_MODE_OFF = False
 
 '// リセット
 Sub reset(ByRef area As Range)
-  Application.EnableEvents = False
-  
   With area
-    .ClearContents
     .Interior.ColorIndex = xlNone
     .Validation.Delete
     .FormatConditions.Delete
     .NumberFormatLocal = "G/標準"
   End With
-  
-  Application.EnableEvents = True
 End Sub
 
 '// 枠線・文字サイズ
@@ -41,14 +36,22 @@ Sub listSelect(ByRef area As Range, ByVal listName As String)
   End With
 
   '条件付き書式
-  Call conditionFormat(area, "=AND(RC<>"""",ISNA(MATCH(RC," & listName & ",0)))")
+  Call condFunction(area, "=AND(RC<>"""",ISNA(MATCH(RC," & listName & ",0)))")
 End Sub
 
 '// 条件付き書式
-Sub conditionFormat(ByRef area As Range, ByVal formula As String)
+Sub condFunction(ByRef area As Range, ByVal formula As String)
   Dim condFormat As FormatCondition
 
   Set condFormat = area.FormatConditions.Add(Type:=xlExpression, Formula1:=formula)
+  condFormat.Interior.Color = work.Range("エラー").Interior.Color
+End Sub
+
+'// 条件付き書式(必須)
+Sub condReqired(ByRef area As Range)
+  Dim condFormat As FormatCondition
+
+  Set condFormat = area.FormatConditions.Add(xlBlanksCondition)
   condFormat.Interior.Color = work.Range("エラー").Interior.Color
 End Sub
 
@@ -78,4 +81,12 @@ Sub imeMode(ByRef area As Range, ByVal mode As Boolean)
   End With
 End Sub
 
-  
+'// 利用不可
+Sub unabled(ByRef area As Range)
+  With area
+    .Interior.Color = work.Range("入力不可").Interior.Color
+    .Validation.Delete
+    .Validation.Add Type:=xlValidateTextLength, AlertStyle:=xlValidAlertStop, Operator:=xlEqual, Formula1:="0"
+    .Validation.ErrorMessage = "入力不可項目です"
+  End With
+End Sub

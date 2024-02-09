@@ -92,8 +92,7 @@ ENDUP:
   'ドメインの変更の場合
   ElseIf Target.Column = col_no.ドメイン Then
     '値リセット
-    MsgBox 100
-    Call Formatter.reset(Target.Offset(, 1).Resize(, 5))
+    Target.Offset(, 1).Resize(, 5).ClearContents
     Call format_domain_type(Target, True)
   End If
 
@@ -147,7 +146,7 @@ Public Sub format2()
   Call format_domain_type(Cells(2, col_no.ドメイン).Resize(row_length), False)
 End Sub
 
-'フォーマット初期化
+'フォーマット
 Private Sub areaFormat()
   Application.EnableEvents = False
 
@@ -166,7 +165,7 @@ Private Sub areaFormat()
   Call Formatter.formatLocal(Union(Range("ELEM_L"), Range("ELEM_M")), "0_;;;")
     
   '// 条件付き書式
-  Call Formatter.conditionFormat(Union(Range("ELEM_B"), Range("ELEM_D"), Range("ELEM_J"), Range("ELEM_K")), "=AND(RC1<>"""",RC="""")")
+  Call Formatter.condFunction(Union(Range("ELEM_B"), Range("ELEM_D"), Range("ELEM_J"), Range("ELEM_K")), "=AND(RC1<>"""",RC="""")")
   
   '// IMEモード
   Call Formatter.imeMode(Union(Range("ELEM_A"), Range("ELEM_K")), Formatter.IME_MODE_ON)
@@ -190,8 +189,8 @@ Private Sub format_domain_type(ByVal Target As Range, ByVal is_reset As Boolean)
   Dim i As Long
   Dim dec As Integer
   
-  '初期化（値リセット）
-  'If is_reset Then Target.Offset(, 1).Resize(, 5).ClearContents
+  '// フォーマット初期化
+  Call Formatter.reset(Target.Offset(, 1).Resize(, 5))
   
   '行ごとにフォーマット対照を選別
   For Each elm In Target
@@ -261,7 +260,6 @@ Private Sub format_domain_type(ByVal Target As Range, ByVal is_reset As Boolean)
   Call decoration(keta, is_reset)
   Call decoration(num, is_reset)
   Call decoration(ng, is_reset)
-  Call decoration(none, is_reset)
 
 End Sub
 
@@ -305,53 +303,12 @@ Private Sub decoration(ByRef Target As decolation_cells, ByVal is_reset As Boole
     
     End With
     
-  ElseIf Target.dec_type = decoration_type.真偽値 Then
-    With Target.dec_range
-      .Interior.ColorIndex = xlNone
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="1"
-      .Validation.ErrorMessage = "1(値を含む)のみ入力可能"
-      .Validation.imeMode = xlIMEModeOff
-      If is_reset Then .value = 1
-    
-    End With
-    
   ElseIf Target.dec_type = decoration_type.入力不可 Then
-    With Target.dec_range
-      .Interior.Color = work.Range("入力不可").Interior.Color
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateTextLength, AlertStyle:=xlValidAlertStop, Operator:=xlEqual, Formula1:="0"
-      .Validation.ErrorMessage = "入力不可項目です"
-      .Validation.imeMode = xlIMEModeOff
-    
-    End With
-  
-  ElseIf Target.dec_type = decoration_type.なし Then
-    Call Formatter.reset(Target.dec_range)
-  End If
-  
-  '必須
-  If Target.reqired Then
-    Set cond_format = Target.dec_range.FormatConditions.Add(xlBlanksCondition)
-    cond_format.Interior.Color = work.Range("入力必須").Interior.Color
-  
-  Else
-    Target.dec_range.FormatConditions.Delete
-  
-  End If
-End Sub
+    Call Formatter.unabled(Target.dec_range)
 
-'項目名を指定して要素値を返す。
-Public Function get_val(ByVal name As String, ByVal col As Integer, ByVal def_val) As Variant
-  Dim elm As Range: Set elm = Range("項目名KEY").Find(name, LookAt:=xlWhole)
-  
-  '存在しなければデフォルト値を返却
-  If elm Is Nothing Then
-    get_val = def_val
-  
-  Else
-    get_val = elm.Offset(, col).value
-  
   End If
-  
-End Function
+
+  '必須
+  If Target.reqired Then Call Formatter.condReqired(Target.dec_range)
+
+End Sub
