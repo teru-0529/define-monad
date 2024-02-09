@@ -107,7 +107,7 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
   End With
 
   'ŠÖ”
-  Cells(start_row, col_no.€–Ú–¼ES).Resize(f_rows).Formula = "=camel2snake(RC[-1])"
+  Cells(start_row, col_no.€–Ú–¼ES).Resize(f_rows).formula = "=camel2snake(RC[-1])"
   
   'ğŒ•t‚«‘®
   Set cond_format_1 = Cells(start_row, col_no.”h¶Œ³€–Ú–¼).Resize(f_rows).FormatConditions.Add(Type:=xlExpression, Formula1:="=AND(RC<>"""",ISNA(MATCH(RC,€–ÚƒŠƒXƒg,0)))")
@@ -120,12 +120,12 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
   With Union(Cells(start_row, col_no.€–Ú–¼J).Resize(f_rows), Cells(start_row, col_no.à–¾).Resize(f_rows)).Validation
     .Delete
     .Add Type:=xlValidateInputOnly
-    .IMEMode = xlIMEModeOn
+    .imeMode = xlIMEModeOn
   End With
   With Cells(start_row, col_no.€–Ú–¼EC).Resize(f_rows).Validation
     .Delete
     .Add Type:=xlValidateInputOnly
-    .IMEMode = xlIMEModeOff
+    .imeMode = xlIMEModeOff
   End With
   
   

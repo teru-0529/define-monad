@@ -176,9 +176,9 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
   End With
 
   '関数
-  Cells(start_row, col_no.項目名ES).Resize(f_rows).Formula = "=camel2snake(RC[-1])"
-  Cells(start_row, col_no.種類数).Resize(f_rows).Formula = "=countif(派生元項目KEY,RC[-11])"
-  Cells(start_row, col_no.区分値数).Resize(f_rows).Formula = "=countif(区分値項目KEY,RC[-12])"
+  Cells(start_row, col_no.項目名ES).Resize(f_rows).formula = "=camel2snake(RC[-1])"
+  Cells(start_row, col_no.種類数).Resize(f_rows).formula = "=countif(派生元項目KEY,RC[-11])"
+  Cells(start_row, col_no.区分値数).Resize(f_rows).formula = "=countif(区分値項目KEY,RC[-12])"
 
   '表示形式
   'Cells(start_row, col_no.API例).Resize(f_rows).NumberFormatLocal = "@"
@@ -194,12 +194,12 @@ Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
   With Union(Cells(start_row, col_no.項目名J).Resize(f_rows), Cells(start_row, col_no.説明).Resize(f_rows)).Validation
     .Delete
     .Add Type:=xlValidateInputOnly
-    .IMEMode = xlIMEModeOn
+    .imeMode = xlIMEModeOn
   End With
   With Cells(start_row, col_no.項目名EC).Resize(f_rows).Validation
     .Delete
     .Add Type:=xlValidateInputOnly
-    .IMEMode = xlIMEModeOff
+    .imeMode = xlIMEModeOff
   End With
   
   
@@ -293,7 +293,7 @@ Private Sub decoration(ByRef Target As decolation_cells, ByVal is_reset As Boole
       .Interior.ColorIndex = xlNone
       .Validation.Delete
       .Validation.Add Type:=xlValidateInputOnly
-      .Validation.IMEMode = xlIMEModeOff
+      .Validation.imeMode = xlIMEModeOff
       .NumberFormatLocal = "@"
     
     End With
@@ -304,7 +304,7 @@ Private Sub decoration(ByRef Target As decolation_cells, ByVal is_reset As Boole
       .Validation.Delete
       .Validation.Add Type:=xlValidateWholeNumber, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="0", Formula2:="1000"
       .Validation.ErrorMessage = "0-1000の間で入力可能"
-      .Validation.IMEMode = xlIMEModeOff
+      .Validation.imeMode = xlIMEModeOff
       .NumberFormatLocal = "#,##0_ "
     
     End With
@@ -315,7 +315,7 @@ Private Sub decoration(ByRef Target As decolation_cells, ByVal is_reset As Boole
       .Validation.Delete
       .Validation.Add Type:=xlValidateWholeNumber, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="-99999999", Formula2:="99999999"
       .Validation.ErrorMessage = "数値のみ入力可能"
-      .Validation.IMEMode = xlIMEModeOff
+      .Validation.imeMode = xlIMEModeOff
       .NumberFormatLocal = "#,##0_ "
     
     End With
@@ -326,7 +326,7 @@ Private Sub decoration(ByRef Target As decolation_cells, ByVal is_reset As Boole
       .Validation.Delete
       .Validation.Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="1"
       .Validation.ErrorMessage = "1(値を含む)のみ入力可能"
-      .Validation.IMEMode = xlIMEModeOff
+      .Validation.imeMode = xlIMEModeOff
       If is_reset Then .value = 1
     
     End With
@@ -337,7 +337,7 @@ Private Sub decoration(ByRef Target As decolation_cells, ByVal is_reset As Boole
       .Validation.Delete
       .Validation.Add Type:=xlValidateTextLength, AlertStyle:=xlValidAlertStop, Operator:=xlEqual, Formula1:="0"
       .Validation.ErrorMessage = "入力不可項目です"
-      .Validation.IMEMode = xlIMEModeOff
+      .Validation.imeMode = xlIMEModeOff
     
     End With
   End If

@@ -45,9 +45,9 @@ End Function
 '// タイマーの表示
 Public Sub showTime(ByVal sec As Double)
   '// 時分秒を取得
-  Dim hh As String:  hh = Format(Int(sec / 3600), "00")
-  Dim mm As String:  mm = Format(Int((sec Mod 3600) / 60), "00")
-  Dim ss As String:  ss = Format(Int((sec Mod 3600) Mod 60), "00")
+  Dim hh As String:  hh = format(Int(sec / 3600), "00")
+  Dim mm As String:  mm = format(Int((sec Mod 3600) / 60), "00")
+  Dim ss As String:  ss = format(Int((sec Mod 3600) Mod 60), "00")
 
   Dim vSec As Double: vSec = Int(sec * 100) / 100
   '// デバック表示
