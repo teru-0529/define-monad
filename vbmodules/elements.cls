@@ -9,50 +9,16 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-'カラム番号
-Private Enum col_no
-  項目名J = 1
-  項目名EC = 2
-  項目名ES = 3
- ドメイン = 4
-  正規表現 = 5
-  最小桁数 = 6
-  最大桁数 = 7
-  最小値 = 8
-  最大値 = 9
-  API例 = 10
-  説明 = 11
-  API型1 = 12
-  API型2 = 13
-  種類数 = 14
-  区分値数 = 15
-End Enum
-
-Const MAX_COL = 15
-
-'デコレーション種類
-Private Enum decoration_type
-  文字列 = 1
-  桁数 = 2
-  数値 = 3
-  真偽値 = 4
-  入力不可 = 9
-  入力必須 = 100
-End Enum
-
-'セル設定種類
-Private Type decolation_cells
-  dec_range As Range
-  dec_type As decoration_type
-  reqired As Boolean
-End Type
+Const COL_NAMEJP = 1
+Const COL_DOMAIN = 4
+Const COL_EXAMPLE = 10
 
 Dim val As Variant '変更前の仮値
 
 'シート選択時
 Private Sub Worksheet_Activate()
-  Dim start_row As Integer: start_row = Cells(rows.Count, "A").End(xlUp).Row
-  Call init_format(start_row + 1, 0)
+  '// フォーマット
+  Call areaFormat
 End Sub
 
 'セルの選択イベント
@@ -60,7 +26,7 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
 On Error GoTo ENDUP
   
   '項目名を選択した場合
-  If Target.Column = 項目名J Then
+  If Target.Column = COL_NAMEJP Then
     val = ""
     If Target.value = "" Then Exit Sub
     If Target.Cells.Count <> 1 Then Exit Sub
@@ -78,7 +44,7 @@ On Error GoTo ENDUP
   If Target.Cells.Count <> 1 Then Exit Sub
   
   '項目名の変更の場合
-  If Target.Column = col_no.項目名J Then
+  If Target.Column = COL_NAMEJP Then
     If val = "" Then Exit Sub
     If Target.value = "" Then Exit Sub
   
@@ -91,9 +57,10 @@ On Error GoTo ENDUP
 ENDUP:
   
   'ドメインの変更の場合
-  ElseIf Target.Column = col_no.ドメイン Then
+  ElseIf Target.Column = COL_DOMAIN Then
     '値リセット
-    Call format_domain_type(Target, True)
+    Target.Offset(, 1).Resize(, 5).ClearContents
+    Call domainFormat(Target)
   End If
 
 End Sub
@@ -104,7 +71,8 @@ Public Sub load(ByVal data As String)
   Dim i As Long, rowLength As Long
 
   '// 初期化
-  Call init
+  UsedRange.Offset(1).Clear
+  Columns(COL_EXAMPLE).NumberFormatLocal = "@"
 
   '// 行ごとのデータに分割
   records = Split(data, vbLf)
@@ -130,244 +98,65 @@ Public Sub load(ByVal data As String)
   Next i
 
   '// 値セット
-  Cells(2, col_no.項目名J).Resize(rowLength, 2) = wkRange1
-  Cells(2, col_no.ドメイン).Resize(rowLength, 8) = wkRange2
+  Cells(2, COL_NAMEJP).Resize(rowLength, 2) = wkRange1
+  Cells(2, COL_DOMAIN).Resize(rowLength, 8) = wkRange2
 
   '// フォーマット
-  Call format2
+  Call areaFormat
+  Call domainFormat(Cells(2, COL_DOMAIN).Resize(rowLength))
 End Sub
 
-'// 初期化(データ消去)
-Public Sub init()
-  '初期行以降をクリア
-  UsedRange.Offset(1).Clear
-  Columns(col_no.API例).NumberFormatLocal = "@"
-End Sub
-
-'// フォーマット TODO:リネーム
-Public Sub format2()
-  Dim row_length As Long: row_length = Cells(rows.Count, "A").End(xlUp).Row - 1
-  
-  Call init_format(2, row_length)
-  Call format_domain_type(Cells(2, col_no.ドメイン).Resize(row_length), False)
-End Sub
-
-'フォーマット初期化
-Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
+'フォーマット
+Private Sub areaFormat()
+  Application.ScreenUpdating = False
   Application.EnableEvents = False
-  
-  Dim f_rows As Integer: f_rows = rows + ADDED_ROWS 'フォーマット化行数(ADDED_ROWS分多めにフォーマット)
-  Dim cond_format As FormatCondition
 
-  '枠線
-  With Cells(start_row, 1).Resize(f_rows, MAX_COL)
-    .Borders.LineStyle = xlContinuous
-    .Borders.Color = RGB(68, 114, 196) 'DEEP_BLUE
-    .Borders(xlEdgeTop).Color = RGB(189, 215, 238) 'WEAK_BLUE
-    .Borders(xlInsideHorizontal).Color = RGB(189, 215, 238) 'WEAK_BLUE
-    .Font.Size = 9
-  End With
+  '// 枠線
+  Call Formatter.borderAndFontsize(Range("ELEM_FULL"))
+  
+  '// リスト選択
+  Call Formatter.listSelect(Range("ELEM_D"), "ドメインタイプKEY")
+  
+  '// 関数
+  Call Formatter.setFunction(Range("ELEM_C"), "=camel2snake(RC[-1])")
+  Call Formatter.setFunction(Range("ELEM_L"), "=countif(派生元項目KEY,RC[-11])")
+  Call Formatter.setFunction(Range("ELEM_M"), "=countif(区分値項目KEY,RC[-12])")
 
-  '背景色
-  Union(Cells(start_row, col_no.項目名ES).Resize(f_rows), Cells(start_row, col_no.API型1).Resize(f_rows, 4)).Interior.Color = RGB(255, 255, 213) 'CREAM
+  '// 表示形式
+  Call Formatter.formatLocal(Union(Range("ELEM_L"), Range("ELEM_M")), "0_;;;")
+    
+  '// 条件付き書式
+  Call Formatter.condFunction(Union(Range("ELEM_B"), Range("ELEM_D"), Range("ELEM_J"), Range("ELEM_K")), "=AND(RC1<>"""",RC="""")")
   
-  '入力規則
-  With Cells(start_row, col_no.ドメイン).Resize(f_rows).Validation
-    .Delete
-    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=ドメインタイプKEY"
-  End With
+  '// IMEモード
+  Call Formatter.imeMode(Union(Range("ELEM_A"), Range("ELEM_K")), Formatter.IME_MODE_ON)
+  Call Formatter.imeMode(Range("ELEM_B"), Formatter.IME_MODE_OFF)
 
-  '関数
-  Cells(start_row, col_no.項目名ES).Resize(f_rows).Formula = "=camel2snake(RC[-1])"
-  Cells(start_row, col_no.API型1).Resize(f_rows).Formula = "=iferror(vlookup(RC[-8],ドメインタイプDATA,6,False)&"""","""")"
-  Cells(start_row, col_no.API型2).Resize(f_rows).Formula = "=iferror(vlookup(RC[-9],ドメインタイプDATA,7,False)&"""","""")"
-  Cells(start_row, col_no.種類数).Resize(f_rows).Formula = "=countif(派生元項目KEY,RC[-13])"
-  Cells(start_row, col_no.区分値数).Resize(f_rows).Formula = "=countif(区分値項目KEY,RC[-14])"
-
-  '表示形式
-  Cells(start_row, col_no.API例).Resize(f_rows).NumberFormatLocal = "@"
-  Union(Cells(start_row, col_no.種類数).Resize(f_rows), Cells(start_row, col_no.区分値数).Resize(f_rows)).NumberFormatLocal = "0_;;;"
-
-  
-  '条件付き書式
-  Set cond_format = Union(Cells(start_row, col_no.項目名EC).Resize(f_rows), Cells(start_row, col_no.ドメイン).Resize(f_rows), _
-   Cells(start_row, col_no.API例).Resize(f_rows), Cells(start_row, col_no.説明).Resize(f_rows)).FormatConditions.Add(Type:=xlExpression, Formula1:="=AND(RC1<>"""",RC="""")")
-  cond_format.Interior.Color = work.Range("入力必須").Interior.Color
-  
-  'IMEモード
-  With Union(Cells(start_row, col_no.項目名J).Resize(f_rows), Cells(start_row, col_no.説明).Resize(f_rows)).Validation
-    .Delete
-    .Add Type:=xlValidateInputOnly
-    .IMEMode = xlIMEModeOn
-  End With
-  With Cells(start_row, col_no.項目名EC).Resize(f_rows).Validation
-    .Delete
-    .Add Type:=xlValidateInputOnly
-    .IMEMode = xlIMEModeOff
-  End With
-  
-  
   Application.EnableEvents = True
+  Application.ScreenUpdating = True
 End Sub
 
-
-'ドメインタイプの変更イベント
-Private Sub format_domain_type(ByVal Target As Range, ByVal is_reset As Boolean)
-  Dim ng As decolation_cells:  ng.dec_type = decoration_type.入力不可:  ng.reqired = False
-  Dim str As decolation_cells:  str.dec_type = decoration_type.文字列:  str.reqired = False
-  Dim str_req As decolation_cells:  str_req.dec_type = decoration_type.文字列:  str_req.reqired = True
-  Dim keta As decolation_cells:  keta.dec_type = decoration_type.桁数:  keta.reqired = False
-  Dim keta_req As decolation_cells:  keta_req.dec_type = decoration_type.桁数:  keta_req.reqired = True
-  Dim num As decolation_cells:  num.dec_type = decoration_type.数値:  num.reqired = True
-  Dim bool As decolation_cells:  bool.dec_type = decoration_type.真偽値: bool.reqired = False
+'// ドメインフォーマット
+Private Sub domainFormat(ByRef Target As Range)
+  Application.ScreenUpdating = False
   
   Dim elm As Range
-  Dim i As Long
-  Dim dec As Integer
+  Dim areas As DecolationRanges
   
-  '初期化（値リセット）
-  If is_reset Then Target.Offset(, 1).Resize(, 5).ClearContents
-  
-  '行ごとにフォーマット対照を選別
+  '// フォーマット初期化
+  Call Formatter.reset(Target.Offset(, 1).Resize(, 5))
+
+  '// 行ごとにフォーマット対象を分類
   For Each elm In Target
-    i = elm.Row
-    
-    '正規表現
-    dec = domain_types.get_val(elm.value, 7, -1)
-    If dec > 0 Then
-      Set str_req.dec_range = Util.union_range(str_req.dec_range, Cells(i, col_no.正規表現))
-    ElseIf dec < 0 Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.正規表現))
-    Else
-      Set str.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.正規表現))
-    End If
-    'タイプ：時間の場合、正規表現を設定
-    If elm.value = "時間" Then Cells(i, col_no.正規表現).value = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
-    
-    '最小桁数
-    dec = domain_types.get_val(elm.value, 8, -1)
-    If dec > 0 Then
-      Set keta_req.dec_range = Util.union_range(keta_req.dec_range, Cells(i, col_no.最小桁数))
-    ElseIf dec < 0 Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最小桁数))
-    Else
-      Set keta.dec_range = Util.union_range(keta.dec_range, Cells(i, col_no.最小桁数))
-    End If
-    
-    '最大桁数
-    dec = domain_types.get_val(elm.value, 9, -1)
-    If dec > 0 Then
-      Set keta_req.dec_range = Util.union_range(keta_req.dec_range, Cells(i, col_no.最大桁数))
-    ElseIf dec < 0 Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最大桁数))
-    End If
-    
-    '最小値/最大値
-    dec = domain_types.get_val(elm.value, 10, -1)
-    If dec > 0 Then
-      Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最小値))
-      Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最大値))
-    ElseIf dec < 0 Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最小値).Resize(, 2))
-    End If
-        
+    Call domain_types.devideRange(elm, areas)
   Next elm
-   
-  
-  Call decoration(str_req, is_reset)
-  Call decoration(str, is_reset)
-  Call decoration(keta_req, is_reset)
-  Call decoration(keta, is_reset)
-  Call decoration(num, is_reset)
-  Call decoration(bool, is_reset)
-  Call decoration(ng, is_reset)
 
+  '// フォーマット
+  Call Formatter.stringSpec(Util.unionRange(areas.stringRangeR, areas.stringRange))
+  Call Formatter.lengthSpec(Util.unionRange(areas.lengthRangeR, areas.lengthRange))
+  Call Formatter.numericSpec(Util.unionRange(areas.numericRangeR, areas.numericRange))
+  Call Formatter.unabledSpec(areas.unabledRange)
+  Call Formatter.condReqired(Util.unionRange(areas.stringRangeR, Util.unionRange(areas.lengthRangeR, areas.numericRangeR)))
+
+  Application.ScreenUpdating = True
 End Sub
-
-
-'入力エリアのデコレーション
-Private Sub decoration(ByRef Target As decolation_cells, ByVal is_reset As Boolean)
-  Dim cond_format As FormatCondition
-  
-  If Target.dec_range Is Nothing Then Exit Sub
-      
-      
-  If Target.dec_type = decoration_type.文字列 Then
-    With Target.dec_range
-      .Interior.ColorIndex = xlNone
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateInputOnly
-      .Validation.IMEMode = xlIMEModeOff
-      .NumberFormatLocal = "@"
-    
-    End With
-    
-  ElseIf Target.dec_type = decoration_type.桁数 Then
-    With Target.dec_range
-      .Interior.ColorIndex = xlNone
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateWholeNumber, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="0", Formula2:="1000"
-      .Validation.ErrorMessage = "0-1000の間で入力可能"
-      .Validation.IMEMode = xlIMEModeOff
-      .NumberFormatLocal = "#,##0_ "
-    
-    End With
-    
-  ElseIf Target.dec_type = decoration_type.数値 Then
-    With Target.dec_range
-      .Interior.ColorIndex = xlNone
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateWholeNumber, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="-99999999", Formula2:="99999999"
-      .Validation.ErrorMessage = "数値のみ入力可能"
-      .Validation.IMEMode = xlIMEModeOff
-      .NumberFormatLocal = "#,##0_ "
-    
-    End With
-    
-  ElseIf Target.dec_type = decoration_type.真偽値 Then
-    With Target.dec_range
-      .Interior.ColorIndex = xlNone
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="1"
-      .Validation.ErrorMessage = "1(値を含む)のみ入力可能"
-      .Validation.IMEMode = xlIMEModeOff
-      If is_reset Then .value = 1
-    
-    End With
-    
-  ElseIf Target.dec_type = decoration_type.入力不可 Then
-    With Target.dec_range
-      .Interior.Color = work.Range("入力不可").Interior.Color
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateTextLength, AlertStyle:=xlValidAlertStop, Operator:=xlEqual, Formula1:="0"
-      .Validation.ErrorMessage = "入力不可項目です"
-      .Validation.IMEMode = xlIMEModeOff
-    
-    End With
-  End If
-  
-  '必須
-  If Target.reqired Then
-    Set cond_format = Target.dec_range.FormatConditions.Add(xlBlanksCondition)
-    cond_format.Interior.Color = work.Range("入力必須").Interior.Color
-  
-  Else
-    Target.dec_range.FormatConditions.Delete
-  
-  End If
-End Sub
-
-'項目名を指定して要素値を返す。
-Public Function get_val(ByVal name As String, ByVal col As Integer, ByVal def_val) As Variant
-  Dim elm As Range: Set elm = Range("項目名KEY").Find(name, LookAt:=xlWhole)
-  
-  '存在しなければデフォルト値を返却
-  If elm Is Nothing Then
-    get_val = def_val
-  
-  Else
-    get_val = elm.Offset(, col).value
-  
-  End If
-  
-End Function

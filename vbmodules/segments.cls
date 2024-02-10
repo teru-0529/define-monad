@@ -9,25 +9,15 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-'カラム番号
-Private Enum col_no
-  項目名J = 1
-  区分値 = 2
-  区分名 = 3
-  説明 = 4
-End Enum
-
-Const MAX_COL = 4
-
+Const COL_ORIGINAL = 1
 
 'シート選択時
 Private Sub Worksheet_Activate()
   Call work.segment_reflesh '区分値リストの最新化
-
-  Dim start_row As Integer: start_row = Cells(rows.Count, "A").End(xlUp).Row
-  Call init_format(start_row + 1, 0)
+  
+  '// フォーマット
+  Call areaFormat
 End Sub
-
 
 '項目名の変更追随
 Public Sub replace_element_name(ByVal old_val As String, ByVal new_val As String)
@@ -40,7 +30,7 @@ Public Sub load(ByVal data As String)
   Dim i As Long, rowLength As Long
 
   '// 初期化
-  Call init
+  UsedRange.Offset(1).Clear
 
   '// 行ごとのデータに分割
   records = Split(data, vbLf)
@@ -58,65 +48,30 @@ Public Sub load(ByVal data As String)
   Next i
 
   '// 値セット
-  Cells(2, col_no.項目名J).Resize(rowLength, 4) = wkRange1
+  Cells(2, COL_ORIGINAL).Resize(rowLength, 4) = wkRange1
 
   '// フォーマット
-  Call format2
+  Call areaFormat
 End Sub
 
-'// 初期化(データ消去)
-Public Sub init()
-  '初期行以降をクリア
-  UsedRange.Offset(1).Clear
-End Sub
-
-'// フォーマット TODO:リネーム
-Public Sub format2()
-  Dim row_length As Long: row_length = Cells(rows.Count, "A").End(xlUp).Row - 1
-  
-  Call init_format(2, row_length)
-End Sub
-
-'フォーマット初期化
-Public Sub init_format(ByVal start_row As Long, ByVal rows As Long)
+'// フォーマット
+Private Sub areaFormat()
+  Application.ScreenUpdating = False
   Application.EnableEvents = False
-  
-  Dim f_rows As Integer: f_rows = rows + ADDED_ROWS 'フォーマット化行数(ADDED_ROWS分多めにフォーマット)
-  Dim cond_format_1 As FormatCondition, cond_format_2 As FormatCondition
 
-  '枠線
-  With Cells(start_row, 1).Resize(f_rows, MAX_COL)
-    .Borders.LineStyle = xlContinuous
-    .Borders.Color = RGB(68, 114, 196) 'DEEP_BLUE
-    .Borders(xlEdgeTop).Color = RGB(189, 215, 238) 'WEAK_BLUE
-    .Borders(xlInsideHorizontal).Color = RGB(189, 215, 238) 'WEAK_BLUE
-    .Font.Size = 9
-  End With
+  '// 枠線
+  Call Formatter.borderAndFontsize(Range("SEGM_FULL"))
 
-  '入力規則
-  With Cells(start_row, col_no.項目名J).Resize(f_rows).Validation
-    .Delete
-    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="=区分値リスト"
-  End With
+  '// リスト選択
+  Call Formatter.listSelect(Range("SEGM_A"), "区分値リスト")
 
-  '条件付き書式
-  Set cond_format_1 = Cells(start_row, col_no.項目名J).Resize(f_rows).FormatConditions.Add(Type:=xlExpression, Formula1:="=AND(RC<>"""",ISNA(MATCH(RC,区分値リスト,0)))")
-  cond_format_1.Interior.Color = work.Range("入力必須").Interior.Color
-  Set cond_format_2 = Union(Cells(start_row, col_no.区分値).Resize(f_rows), _
-   Cells(start_row, col_no.区分名).Resize(f_rows), Cells(start_row, col_no.説明).Resize(f_rows)).FormatConditions.Add(Type:=xlExpression, Formula1:="=AND(RC1<>"""",RC="""")")
-  cond_format_2.Interior.Color = work.Range("入力必須").Interior.Color
-  
-  'IMEモード
-  With Union(Cells(start_row, col_no.区分名).Resize(f_rows), Cells(start_row, col_no.説明).Resize(f_rows)).Validation
-    .Delete
-    .Add Type:=xlValidateInputOnly
-    .IMEMode = xlIMEModeOn
-  End With
-  With Cells(start_row, col_no.区分値).Resize(f_rows).Validation
-    .Delete
-    .Add Type:=xlValidateInputOnly
-    .IMEMode = xlIMEModeOff
-  End With
-  
+  '// 条件付き書式
+  Call Formatter.condFunction(Union(Range("SEGM_B"), Range("SEGM_C"), Range("SEGM_D")), "=AND(RC1<>"""",RC="""")")
+
+  '// IMEモード
+  Call Formatter.imeMode(Union(Range("SEGM_C"), Range("SEGM_D")), Formatter.IME_MODE_ON)
+  Call Formatter.imeMode(Range("SEGM_B"), Formatter.IME_MODE_OFF)
+
   Application.EnableEvents = True
+  Application.ScreenUpdating = True
 End Sub

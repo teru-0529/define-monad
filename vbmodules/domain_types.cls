@@ -9,17 +9,74 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-'項目名を指定して要素値を返す。
-Public Function get_val(ByVal name As String, ByVal col As Integer, ByVal def_val) As Variant
-  Dim elm As Range: Set elm = Range("ドメインタイプKEY").Find(name, LookAt:=xlWhole)
+'// 管理状態
+Const STATUS_REQUIRED = 1
+Const STATUS_ANY = 0
+Const STATUS_UNABLED = -1
 
-  '存在しなければデフォルト値を返却
-  If elm Is Nothing Then
-    get_val = def_val
+Dim DOMAIN_STATUS As Variant
+Dim DIC_DOMAIN As Object
 
-  Else
-    get_val = elm.Offset(, col).value
+'// 設定
+Private Sub setup()
+  Dim domain As Range
 
+  DOMAIN_STATUS = Range("ドメインタイプDATA")
+  Set DIC_DOMAIN = CreateObject("Scripting.Dictionary")
+  
+  For Each domain In Range("ドメインタイプKEY")
+    DIC_DOMAIN.Add domain.value, domain.Row - 1
+  Next domain
+End Sub
+
+'// 入力セルのフォーマット分類
+Public Sub devideRange(ByRef base As Range, ByRef devided As DecolationRanges)
+  Dim rowNo As Long
+
+  '// セットアップ(連想配列の準備)
+  Call setup
+  
+  '// キーがなければ分配せずに終了
+  If Not DIC_DOMAIN.Exists(base.value) Then Exit Sub
+  
+  rowNo = DIC_DOMAIN(base.value)
+  
+  '// 正規表現
+  If DOMAIN_STATUS(rowNo, 1) = STATUS_REQUIRED Then
+    Set devided.stringRangeR = Util.unionRange(devided.stringRangeR, base.Offset(, 1))
+  ElseIf DOMAIN_STATUS(rowNo, 1) = STATUS_ANY Then
+    Set devided.stringRange = Util.unionRange(devided.stringRange, base.Offset(, 1))
+  ElseIf DOMAIN_STATUS(rowNo, 1) = STATUS_UNABLED Then
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 1))
   End If
 
-End Function
+  '// 最小桁数
+  If DOMAIN_STATUS(rowNo, 2) = STATUS_REQUIRED Then
+    Set devided.lengthRangeR = Util.unionRange(devided.lengthRangeR, base.Offset(, 2))
+  ElseIf DOMAIN_STATUS(rowNo, 2) = STATUS_ANY Then
+    Set devided.lengthRange = Util.unionRange(devided.lengthRange, base.Offset(, 2))
+  ElseIf DOMAIN_STATUS(rowNo, 2) = STATUS_UNABLED Then
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 2))
+  End If
+  
+  '// 最大桁数
+  If DOMAIN_STATUS(rowNo, 3) = STATUS_REQUIRED Then
+    Set devided.lengthRangeR = Util.unionRange(devided.lengthRangeR, base.Offset(, 3))
+  ElseIf DOMAIN_STATUS(rowNo, 3) = STATUS_ANY Then
+    Set devided.lengthRange = Util.unionRange(devided.lengthRange, base.Offset(, 3))
+  ElseIf DOMAIN_STATUS(rowNo, 3) = STATUS_UNABLED Then
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 3))
+  End If
+  
+  '// 最小最大値
+  If DOMAIN_STATUS(rowNo, 4) = STATUS_REQUIRED Then
+    Set devided.numericRangeR = Util.unionRange(devided.numericRangeR, base.Offset(, 4))
+    Set devided.numericRangeR = Util.unionRange(devided.numericRangeR, base.Offset(, 5))
+  ElseIf DOMAIN_STATUS(rowNo, 4) = STATUS_ANY Then
+    Set devided.numericRange = Util.unionRange(devided.numericRange, base.Offset(, 4))
+    Set devided.numericRange = Util.unionRange(devided.numericRange, base.Offset(, 5))
+  ElseIf DOMAIN_STATUS(rowNo, 4) = STATUS_UNABLED Then
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 4))
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 5))
+  End If
+End Sub
