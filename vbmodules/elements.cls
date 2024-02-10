@@ -39,13 +39,6 @@ Private Enum decoration_type
   入力必須 = 100
 End Enum
 
-'セル設定種類
-Private Type decolation_cells
-  dec_range As Range
-  dec_type As decoration_type
-  reqired As Boolean
-End Type
-
 Dim val As Variant '変更前の仮値
 
 'シート選択時
@@ -93,7 +86,7 @@ ENDUP:
   ElseIf Target.Column = col_no.ドメイン Then
     '値リセット
     Target.Offset(, 1).Resize(, 5).ClearContents
-    Call format_domain_type(Target, True)
+    Call domainFormat(Target)
   End If
 
 End Sub
@@ -135,15 +128,8 @@ Public Sub load(ByVal data As String)
   Cells(2, col_no.ドメイン).Resize(rowLength, 8) = wkRange2
 
   '// フォーマット
-  Call format2
-End Sub
-
-'// フォーマット TODO:リネーム
-Public Sub format2()
-  Dim row_length As Long: row_length = Cells(rows.Count, "A").End(xlUp).Row - 1
-  
   Call areaFormat
-  Call format_domain_type(Cells(2, col_no.ドメイン).Resize(row_length), False)
+  Call domainFormat(Cells(2, col_no.ドメイン).Resize(rowLength))
 End Sub
 
 'フォーマット
@@ -174,141 +160,23 @@ Private Sub areaFormat()
   Application.EnableEvents = True
 End Sub
 
-
-'ドメインタイプの変更イベント
-Private Sub format_domain_type(ByVal Target As Range, ByVal is_reset As Boolean)
-  Dim ng As decolation_cells:  ng.dec_type = decoration_type.入力不可:  ng.reqired = False
-  Dim str As decolation_cells:  str.dec_type = decoration_type.文字列:  str.reqired = False
-  Dim str_req As decolation_cells:  str_req.dec_type = decoration_type.文字列:  str_req.reqired = True
-  Dim keta As decolation_cells:  keta.dec_type = decoration_type.桁数:  keta.reqired = False
-  Dim keta_req As decolation_cells:  keta_req.dec_type = decoration_type.桁数:  keta_req.reqired = True
-  Dim num As decolation_cells:  num.dec_type = decoration_type.数値:  num.reqired = False
-  Dim none As decolation_cells:  none.dec_type = decoration_type.なし:  num.reqired = False
-  
+'// ドメインフォーマット
+Private Sub domainFormat(ByRef Target As Range)
   Dim elm As Range
-  Dim i As Long
-  Dim dec As Integer
+  Dim areas As DecolationRanges
   
   '// フォーマット初期化
   Call Formatter.reset(Target.Offset(, 1).Resize(, 5))
-  
-  '行ごとにフォーマット対照を選別
+
+  '// 行ごとにフォーマット対象を分類
   For Each elm In Target
-      
-    i = elm.Row
-
-    '正規表現
-    dec = getStatus(elm.value, ITEM_REG_EX)
-    If dec = STATUS_REQUIRED Then
-      Set str_req.dec_range = Util.union_range(str_req.dec_range, Cells(i, col_no.正規表現))
-    ElseIf dec = STATUS_ANY Then
-      Set str.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.正規表現))
-    ElseIf dec = STATUS_UNABLED Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.正規表現))
-    Else
-      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.正規表現))
-    End If
-    'タイプ：時間の場合、正規表現を設定
-    If elm.value = "時間" Then Cells(i, col_no.正規表現).value = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
-
-    '最小桁数
-    dec = getStatus(elm.value, ITEM_MIN_DIGITS)
-    If dec = STATUS_REQUIRED Then
-      Set keta_req.dec_range = Util.union_range(keta_req.dec_range, Cells(i, col_no.最小桁数))
-    ElseIf dec = STATUS_ANY Then
-      Set keta.dec_range = Util.union_range(keta.dec_range, Cells(i, col_no.最小桁数))
-    ElseIf dec = STATUS_UNABLED Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最小桁数))
-    Else
-      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.最小桁数))
-    End If
-    
-    '最大桁数
-    dec = getStatus(elm.value, ITEM_MAX_DIGITS)
-    If dec = STATUS_REQUIRED Then
-      Set keta_req.dec_range = Util.union_range(keta_req.dec_range, Cells(i, col_no.最大桁数))
-    ElseIf dec = STATUS_ANY Then
-      Set keta.dec_range = Util.union_range(keta.dec_range, Cells(i, col_no.最大桁数))
-    ElseIf dec = STATUS_UNABLED Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最大桁数))
-    Else
-      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.最大桁数))
-    End If
-
-    '最小値/最大値
-    dec = getStatus(elm.value, ITEM_VALUE_RANGE)
-    If dec = STATUS_REQUIRED Then
-      Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最小値))
-      Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最大値))
-    ElseIf dec = STATUS_ANY Then
-      Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最小値))
-      Set num.dec_range = Util.union_range(num.dec_range, Cells(i, col_no.最大値))
-    ElseIf dec = STATUS_UNABLED Then
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最小値))
-      Set ng.dec_range = Util.union_range(ng.dec_range, Cells(i, col_no.最大値))
-    Else
-      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.最小値))
-      Set none.dec_range = Util.union_range(str.dec_range, Cells(i, col_no.最小値))
-    End If
-        
+    Call domain_types.devideRange(elm, areas)
   Next elm
-   
-  
-  Call decoration(str_req, is_reset)
-  Call decoration(str, is_reset)
-  Call decoration(keta_req, is_reset)
-  Call decoration(keta, is_reset)
-  Call decoration(num, is_reset)
-  Call decoration(ng, is_reset)
 
-End Sub
-
-
-'入力エリアのデコレーション
-Private Sub decoration(ByRef Target As decolation_cells, ByVal is_reset As Boolean)
-  Dim cond_format As FormatCondition
-  
-  If Target.dec_range Is Nothing Then Exit Sub
-      
-      
-  If Target.dec_type = decoration_type.文字列 Then
-    With Target.dec_range
-      .Interior.ColorIndex = xlNone
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateInputOnly
-      .Validation.imeMode = xlIMEModeOff
-      .NumberFormatLocal = "@"
-    
-    End With
-    
-  ElseIf Target.dec_type = decoration_type.桁数 Then
-    With Target.dec_range
-      .Interior.ColorIndex = xlNone
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateWholeNumber, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="0", Formula2:="1000"
-      .Validation.ErrorMessage = "0-1000の間で入力可能"
-      .Validation.imeMode = xlIMEModeOff
-      .NumberFormatLocal = "#,##0_ "
-    
-    End With
-    
-  ElseIf Target.dec_type = decoration_type.数値 Then
-    With Target.dec_range
-      .Interior.ColorIndex = xlNone
-      .Validation.Delete
-      .Validation.Add Type:=xlValidateWholeNumber, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="-99999999", Formula2:="99999999"
-      .Validation.ErrorMessage = "数値のみ入力可能"
-      .Validation.imeMode = xlIMEModeOff
-      .NumberFormatLocal = "#,##0_ "
-    
-    End With
-    
-  ElseIf Target.dec_type = decoration_type.入力不可 Then
-    Call Formatter.unabled(Target.dec_range)
-
-  End If
-
-  '必須
-  If Target.reqired Then Call Formatter.condReqired(Target.dec_range)
-
+  '// フォーマット
+  Call Formatter.stringSpec(Util.union_range(areas.stringRangeR, areas.stringRange))
+  Call Formatter.lengthSpec(Util.union_range(areas.lengthRangeR, areas.lengthRange))
+  Call Formatter.numericSpec(Util.union_range(areas.numericRangeR, areas.numericRange))
+  Call Formatter.unabledSpec(areas.unabledRange)
+  Call Formatter.condReqired(Util.union_range(areas.stringRangeR, Util.union_range(areas.lengthRangeR, areas.numericRangeR)))
 End Sub

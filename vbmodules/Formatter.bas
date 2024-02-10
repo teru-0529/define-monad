@@ -1,11 +1,23 @@
 Attribute VB_Name = "Formatter"
 Option Explicit
 
+'// セル設定種類
+Public Type DecolationRanges
+  stringRangeR As Range
+  stringRange As Range
+  lengthRangeR As Range
+  lengthRange As Range
+  numericRangeR As Range
+  numericRange As Range
+  unabledRange As Range
+End Type
+
 Public Const IME_MODE_ON = True
 Public Const IME_MODE_OFF = False
 
 '// リセット
 Sub reset(ByRef area As Range)
+  If area Is Nothing Then Exit Sub
   With area
     .Interior.ColorIndex = xlNone
     .Validation.Delete
@@ -16,6 +28,7 @@ End Sub
 
 '// 枠線・文字サイズ
 Sub borderAndFontsize(ByRef area As Range)
+  If area Is Nothing Then Exit Sub
   With area
     .Borders.LineStyle = xlContinuous
     .Borders.Color = RGB(68, 114, 196) 'DEEP_BLUE
@@ -28,6 +41,7 @@ End Sub
 '// リスト選択
 Sub listSelect(ByRef area As Range, ByVal listName As String)
   Dim condFormat As FormatCondition
+  If area Is Nothing Then Exit Sub
 
   '入力規則
   With area.Validation
@@ -42,6 +56,7 @@ End Sub
 '// 条件付き書式
 Sub condFunction(ByRef area As Range, ByVal formula As String)
   Dim condFormat As FormatCondition
+  If area Is Nothing Then Exit Sub
 
   Set condFormat = area.FormatConditions.Add(Type:=xlExpression, Formula1:=formula)
   condFormat.Interior.Color = work.Range("エラー").Interior.Color
@@ -50,6 +65,7 @@ End Sub
 '// 条件付き書式(必須)
 Sub condReqired(ByRef area As Range)
   Dim condFormat As FormatCondition
+  If area Is Nothing Then Exit Sub
 
   Set condFormat = area.FormatConditions.Add(xlBlanksCondition)
   condFormat.Interior.Color = work.Range("エラー").Interior.Color
@@ -57,6 +73,7 @@ End Sub
 
 '// 関数
 Sub setFunction(ByRef area As Range, ByVal formula As String)
+  If area Is Nothing Then Exit Sub
   '関数
   area.formula = formula
   '背景色
@@ -65,11 +82,13 @@ End Sub
 
 '// 表示形式
 Sub formatLocal(ByRef area As Range, ByVal formula As String)
+  If area Is Nothing Then Exit Sub
   area.NumberFormatLocal = formula
 End Sub
 
 '// IMEモード
 Sub imeMode(ByRef area As Range, ByVal mode As Boolean)
+  If area Is Nothing Then Exit Sub
   With area.Validation
     .Delete
     .Add Type:=xlValidateInputOnly
@@ -81,8 +100,47 @@ Sub imeMode(ByRef area As Range, ByVal mode As Boolean)
   End With
 End Sub
 
-'// 利用不可
-Sub unabled(ByRef area As Range)
+'// 文字列
+Sub stringSpec(ByRef area As Range)
+  If area Is Nothing Then Exit Sub
+  With area
+    .Interior.ColorIndex = xlNone
+    .Validation.Delete
+    .Validation.Add Type:=xlValidateInputOnly
+    .Validation.imeMode = xlIMEModeOff
+    .NumberFormatLocal = "@"
+  End With
+End Sub
+
+'// 桁数指定
+Sub lengthSpec(ByRef area As Range)
+  If area Is Nothing Then Exit Sub
+  With area
+    .Interior.ColorIndex = xlNone
+    .Validation.Delete
+    .Validation.Add Type:=xlValidateWholeNumber, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="1", Formula2:="1000"
+    .Validation.ErrorMessage = "1-1000の間で入力可能"
+    .Validation.imeMode = xlIMEModeOff
+    .NumberFormatLocal = "#,##0_ "
+  End With
+End Sub
+
+'// 数値範囲指定
+Sub numericSpec(ByRef area As Range)
+  If area Is Nothing Then Exit Sub
+  With area
+    .Interior.ColorIndex = xlNone
+    .Validation.Delete
+    .Validation.Add Type:=xlValidateWholeNumber, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:="-999999999999", Formula2:="999999999999"
+    .Validation.ErrorMessage = "数値のみ入力可能"
+    .Validation.imeMode = xlIMEModeOff
+    .NumberFormatLocal = "#,##0_ "
+  End With
+End Sub
+
+'// 利用不可指定
+Sub unabledSpec(ByRef area As Range)
+  If area Is Nothing Then Exit Sub
   With area
     .Interior.Color = work.Range("入力不可").Interior.Color
     .Validation.Delete
