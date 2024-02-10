@@ -43,40 +43,40 @@ Public Sub devideRange(ByRef base As Range, ByRef devided As DecolationRanges)
   
   '// ê≥ãKï\åª
   If DOMAIN_STATUS(rowNo, 1) = STATUS_REQUIRED Then
-    Set devided.stringRangeR = Util.union_range(devided.stringRangeR, base.Offset(, 1))
+    Set devided.stringRangeR = Util.unionRange(devided.stringRangeR, base.Offset(, 1))
   ElseIf DOMAIN_STATUS(rowNo, 1) = STATUS_ANY Then
-    Set devided.stringRange = Util.union_range(devided.stringRange, base.Offset(, 1))
+    Set devided.stringRange = Util.unionRange(devided.stringRange, base.Offset(, 1))
   ElseIf DOMAIN_STATUS(rowNo, 1) = STATUS_UNABLED Then
-    Set devided.unabledRange = Util.union_range(devided.unabledRange, base.Offset(, 1))
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 1))
   End If
 
   '// ç≈è¨åÖêî
   If DOMAIN_STATUS(rowNo, 2) = STATUS_REQUIRED Then
-    Set devided.lengthRangeR = Util.union_range(devided.lengthRangeR, base.Offset(, 2))
+    Set devided.lengthRangeR = Util.unionRange(devided.lengthRangeR, base.Offset(, 2))
   ElseIf DOMAIN_STATUS(rowNo, 2) = STATUS_ANY Then
-    Set devided.lengthRange = Util.union_range(devided.lengthRange, base.Offset(, 2))
+    Set devided.lengthRange = Util.unionRange(devided.lengthRange, base.Offset(, 2))
   ElseIf DOMAIN_STATUS(rowNo, 2) = STATUS_UNABLED Then
-    Set devided.unabledRange = Util.union_range(devided.unabledRange, base.Offset(, 2))
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 2))
   End If
   
   '// ç≈ëÂåÖêî
   If DOMAIN_STATUS(rowNo, 3) = STATUS_REQUIRED Then
-    Set devided.lengthRangeR = Util.union_range(devided.lengthRangeR, base.Offset(, 3))
+    Set devided.lengthRangeR = Util.unionRange(devided.lengthRangeR, base.Offset(, 3))
   ElseIf DOMAIN_STATUS(rowNo, 3) = STATUS_ANY Then
-    Set devided.lengthRange = Util.union_range(devided.lengthRange, base.Offset(, 3))
+    Set devided.lengthRange = Util.unionRange(devided.lengthRange, base.Offset(, 3))
   ElseIf DOMAIN_STATUS(rowNo, 3) = STATUS_UNABLED Then
-    Set devided.unabledRange = Util.union_range(devided.unabledRange, base.Offset(, 3))
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 3))
   End If
   
   '// ç≈è¨ç≈ëÂíl
   If DOMAIN_STATUS(rowNo, 4) = STATUS_REQUIRED Then
-    Set devided.numericRangeR = Util.union_range(devided.numericRangeR, base.Offset(, 4))
-    Set devided.numericRangeR = Util.union_range(devided.numericRangeR, base.Offset(, 5))
+    Set devided.numericRangeR = Util.unionRange(devided.numericRangeR, base.Offset(, 4))
+    Set devided.numericRangeR = Util.unionRange(devided.numericRangeR, base.Offset(, 5))
   ElseIf DOMAIN_STATUS(rowNo, 4) = STATUS_ANY Then
-    Set devided.numericRange = Util.union_range(devided.numericRange, base.Offset(, 4))
-    Set devided.numericRange = Util.union_range(devided.numericRange, base.Offset(, 5))
+    Set devided.numericRange = Util.unionRange(devided.numericRange, base.Offset(, 4))
+    Set devided.numericRange = Util.unionRange(devided.numericRange, base.Offset(, 5))
   ElseIf DOMAIN_STATUS(rowNo, 4) = STATUS_UNABLED Then
-    Set devided.unabledRange = Util.union_range(devided.unabledRange, base.Offset(, 4))
-    Set devided.unabledRange = Util.union_range(devided.unabledRange, base.Offset(, 5))
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 4))
+    Set devided.unabledRange = Util.unionRange(devided.unabledRange, base.Offset(, 5))
   End If
 End Sub

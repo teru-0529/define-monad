@@ -9,13 +9,7 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-'カラム番号
-Private Enum col_no
-  項目名J = 1
-  区分値 = 2
-  区分名 = 3
-  説明 = 4
-End Enum
+Const COL_ORIGINAL = 1
 
 'シート選択時
 Private Sub Worksheet_Activate()
@@ -54,7 +48,7 @@ Public Sub load(ByVal data As String)
   Next i
 
   '// 値セット
-  Cells(2, col_no.項目名J).Resize(rowLength, 4) = wkRange1
+  Cells(2, COL_ORIGINAL).Resize(rowLength, 4) = wkRange1
 
   '// フォーマット
   Call areaFormat
@@ -62,6 +56,7 @@ End Sub
 
 '// フォーマット
 Private Sub areaFormat()
+  Application.ScreenUpdating = False
   Application.EnableEvents = False
 
   '// 枠線
@@ -78,4 +73,5 @@ Private Sub areaFormat()
   Call Formatter.imeMode(Range("SEGM_B"), Formatter.IME_MODE_OFF)
 
   Application.EnableEvents = True
+  Application.ScreenUpdating = True
 End Sub

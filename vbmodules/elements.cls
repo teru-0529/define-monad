@@ -9,35 +9,9 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-'カラム番号
-Private Enum col_no
-  項目名J = 1
-  項目名EC = 2
-  項目名ES = 3
- ドメイン = 4
-  正規表現 = 5
-  最小桁数 = 6
-  最大桁数 = 7
-  最小値 = 8
-  最大値 = 9
-  API例 = 10
-  説明 = 11
-  種類数 = 12
-  区分値数 = 13
-End Enum
-
-Const MAX_COL = 13
-
-'デコレーション種類
-Private Enum decoration_type
-  なし = 0
-  文字列 = 1
-  桁数 = 2
-  数値 = 3
-  真偽値 = 4
-  入力不可 = 9
-  入力必須 = 100
-End Enum
+Const COL_NAMEJP = 1
+Const COL_DOMAIN = 4
+Const COL_EXAMPLE = 10
 
 Dim val As Variant '変更前の仮値
 
@@ -52,7 +26,7 @@ Private Sub Worksheet_SelectionChange(ByVal Target As Range)
 On Error GoTo ENDUP
   
   '項目名を選択した場合
-  If Target.Column = 項目名J Then
+  If Target.Column = COL_NAMEJP Then
     val = ""
     If Target.value = "" Then Exit Sub
     If Target.Cells.Count <> 1 Then Exit Sub
@@ -70,7 +44,7 @@ On Error GoTo ENDUP
   If Target.Cells.Count <> 1 Then Exit Sub
   
   '項目名の変更の場合
-  If Target.Column = col_no.項目名J Then
+  If Target.Column = COL_NAMEJP Then
     If val = "" Then Exit Sub
     If Target.value = "" Then Exit Sub
   
@@ -83,7 +57,7 @@ On Error GoTo ENDUP
 ENDUP:
   
   'ドメインの変更の場合
-  ElseIf Target.Column = col_no.ドメイン Then
+  ElseIf Target.Column = COL_DOMAIN Then
     '値リセット
     Target.Offset(, 1).Resize(, 5).ClearContents
     Call domainFormat(Target)
@@ -98,7 +72,7 @@ Public Sub load(ByVal data As String)
 
   '// 初期化
   UsedRange.Offset(1).Clear
-  Columns(col_no.API例).NumberFormatLocal = "@"
+  Columns(COL_EXAMPLE).NumberFormatLocal = "@"
 
   '// 行ごとのデータに分割
   records = Split(data, vbLf)
@@ -124,16 +98,17 @@ Public Sub load(ByVal data As String)
   Next i
 
   '// 値セット
-  Cells(2, col_no.項目名J).Resize(rowLength, 2) = wkRange1
-  Cells(2, col_no.ドメイン).Resize(rowLength, 8) = wkRange2
+  Cells(2, COL_NAMEJP).Resize(rowLength, 2) = wkRange1
+  Cells(2, COL_DOMAIN).Resize(rowLength, 8) = wkRange2
 
   '// フォーマット
   Call areaFormat
-  Call domainFormat(Cells(2, col_no.ドメイン).Resize(rowLength))
+  Call domainFormat(Cells(2, COL_DOMAIN).Resize(rowLength))
 End Sub
 
 'フォーマット
 Private Sub areaFormat()
+  Application.ScreenUpdating = False
   Application.EnableEvents = False
 
   '// 枠線
@@ -158,10 +133,13 @@ Private Sub areaFormat()
   Call Formatter.imeMode(Range("ELEM_B"), Formatter.IME_MODE_OFF)
 
   Application.EnableEvents = True
+  Application.ScreenUpdating = True
 End Sub
 
 '// ドメインフォーマット
 Private Sub domainFormat(ByRef Target As Range)
+  Application.ScreenUpdating = False
+  
   Dim elm As Range
   Dim areas As DecolationRanges
   
@@ -174,9 +152,11 @@ Private Sub domainFormat(ByRef Target As Range)
   Next elm
 
   '// フォーマット
-  Call Formatter.stringSpec(Util.union_range(areas.stringRangeR, areas.stringRange))
-  Call Formatter.lengthSpec(Util.union_range(areas.lengthRangeR, areas.lengthRange))
-  Call Formatter.numericSpec(Util.union_range(areas.numericRangeR, areas.numericRange))
+  Call Formatter.stringSpec(Util.unionRange(areas.stringRangeR, areas.stringRange))
+  Call Formatter.lengthSpec(Util.unionRange(areas.lengthRangeR, areas.lengthRange))
+  Call Formatter.numericSpec(Util.unionRange(areas.numericRangeR, areas.numericRange))
   Call Formatter.unabledSpec(areas.unabledRange)
-  Call Formatter.condReqired(Util.union_range(areas.stringRangeR, Util.union_range(areas.lengthRangeR, areas.numericRangeR)))
+  Call Formatter.condReqired(Util.unionRange(areas.stringRangeR, Util.unionRange(areas.lengthRangeR, areas.numericRangeR)))
+
+  Application.ScreenUpdating = True
 End Sub

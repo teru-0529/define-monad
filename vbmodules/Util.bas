@@ -82,14 +82,14 @@ ERROR_:
 End Function
 
 '// unionÉâÉbÉpÅ[
-Public Function union_range(ByVal rng1 As Range, ByVal rng2 As Range) As Range
+Public Function unionRange(ByVal rng1 As Range, ByVal rng2 As Range) As Range
   If rng1 Is Nothing And rng2 Is Nothing Then
-    Set union_range = Nothing
+    Set unionRange = Nothing
   ElseIf rng1 Is Nothing Then
-    Set union_range = rng2
+    Set unionRange = rng2
   ElseIf rng2 Is Nothing Then
-    Set union_range = rng1
+    Set unionRange = rng1
   Else
-    Set union_range = Union(rng1, rng2)
+    Set unionRange = Union(rng1, rng2)
   End If
 End Function
