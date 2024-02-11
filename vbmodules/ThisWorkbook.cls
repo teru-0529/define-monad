@@ -74,6 +74,6 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
   MsgBox "Git管理用ファイル、テーブル要素/OpenAPI要素を作成しました。"
 
   '// 開発モードの場合、モジュールを出力
-  If IS_DEVELOP_MODE Then Call ExportModule.SaveModule
+  If Config.isDevelop() Then Call ExportModule.SaveModule
   Debug.Print Config.getFullVersion
 End Sub

@@ -1,12 +1,6 @@
 Attribute VB_Name = "Config"
 Option Explicit
 
-'// 開発モードの場合にTrue（リリース時はFalseで出荷する）
-Public Const IS_DEVELOP_MODE = True
-
-'// フォーマット追加行数（書式の設定を行う追加行数）
-Public Const ADDED_ROWS = 30
-
 '// iniファイル読込み用関数定義
 Declare PtrSafe Function GetPrivateProfileString Lib _
     "kernel32" Alias "GetPrivateProfileStringA" ( _
@@ -26,6 +20,9 @@ Public TYPES_DDL As String
 
 Public VIEW_DIR As String
 
+'// 操作モード
+Dim OPERATION_MODE As String
+
 '// バージョン情報取得（Full）
 Public Function getFullVersion() As String
   getFullVersion = Process.outerExec("version -F")
@@ -34,6 +31,11 @@ End Function
 '// バージョン情報取得
 Public Function getVersion() As String
   getVersion = Process.outerExec("version")
+End Function
+
+'// 開発モードの場合にTrue
+Public Function isDevelop() As Boolean
+  isDevelop = OPERATION_MODE = "develop"
 End Function
 
 '// ./vba.iniから情報を取得してPublic変数に設定する
@@ -45,21 +47,24 @@ Public Sub init(ByVal iniFile As String)
 
   Debug.Print "|----|---- configuration setup start ----|----|"
 
-  SAVE_DATA = getIniValue("Path", "saveData", iniPath)
+  SAVE_DATA = absPath(getIniValue("Path", "saveData", iniPath))
   Debug.Print "[config] SAVE_DATA: " & SAVE_DATA
 
-  TABLE_ELEMENTS = getIniValue("Path", "tableElements", iniPath)
+  TABLE_ELEMENTS = absPath(getIniValue("Path", "tableElements", iniPath))
   Debug.Print "[config] TABLE_ELEMENTS: " & TABLE_ELEMENTS
 
-  API_ELEMENTS = getIniValue("Path", "apiElements", iniPath)
+  API_ELEMENTS = absPath(getIniValue("Path", "apiElements", iniPath))
   Debug.Print "[config] API_ELEMENTS: " & API_ELEMENTS
 
-  TYPES_DDL = getIniValue("Path", "typesDDL", iniPath)
+  TYPES_DDL = absPath(getIniValue("Path", "typesDDL", iniPath))
   Debug.Print "[config] TYPES_DDL: " & TYPES_DDL
 
-  VIEW_DIR = getIniValue("Path", "viewDir", iniPath)
+  VIEW_DIR = absPath(getIniValue("Path", "viewDir", iniPath))
   Debug.Print "[config] VIEW_DIR: " & VIEW_DIR
 
+  OPERATION_MODE = getIniValue("Operation", "mode", iniPath)
+  Debug.Print "[config] OPERATION_MODE: " & OPERATION_MODE
+  
   Set FSO = Nothing
   Call Util.showTime(Timer - startTime)
   Debug.Print "|----|---- configuration setup end ----|----|"
@@ -71,8 +76,11 @@ Private Function getIniValue(ByVal base As String, ByVal key As String, ByVal pa
 
   Call GetPrivateProfileString(base, key, "N/A", temp, TEMP_LENGTH, path)
   getIniValue = Trim(Left(temp, InStr(temp, vbNullChar) - 1))
-
-  '// 絶対パスを取得
-  getIniValue = CreateObject("Scripting.FileSystemObject").BuildPath(ThisWorkbook.path, getIniValue)
 End Function
+
+Private Function absPath(ByVal path) As String
+  '// 絶対パスを取得
+  absPath = CreateObject("Scripting.FileSystemObject").BuildPath(ThisWorkbook.path, path)
+End Function
+
 
