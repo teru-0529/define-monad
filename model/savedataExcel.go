@@ -44,19 +44,23 @@ func FromExcel(fileName string) (*SaveData, error) {
 			element.RegEx = &row[4]
 		}
 		if row[5] != "" {
-			num, _ := strconv.Atoi(row[5])
+			str := strings.Replace(row[5], ",", "", -1)
+			num, _ := strconv.Atoi(str)
 			element.MinDigits = &num
 		}
 		if row[6] != "" {
-			num, _ := strconv.Atoi(row[6])
+			str := strings.Replace(row[6], ",", "", -1)
+			num, _ := strconv.Atoi(str)
 			element.MaxDigits = &num
 		}
 		if row[7] != "" {
-			num, _ := strconv.Atoi(row[7])
+			str := strings.Replace(row[7], ",", "", -1)
+			num, _ := strconv.Atoi(str)
 			element.MinValue = &num
 		}
 		if row[8] != "" {
-			num, _ := strconv.Atoi(row[8])
+			str := strings.Replace(row[8], ",", "", -1)
+			num, _ := strconv.Atoi(str)
 			element.MaxValue = &num
 		}
 		element.Example = row[9]
