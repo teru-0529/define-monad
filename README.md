@@ -94,3 +94,11 @@ https://github.com/go-yaml/yaml/issues/672
 
 入力値のバリデーション
 https://qiita.com/tkit/items/3cdeafcde2bd98612428
+
+## goreleaser
+
+goreleaser init
+
+* builds:の　`- darwin`（mac用）　を削除
+* archivesに　`files:`　を追加
+* changelogに  `use: github-native`　を追加
