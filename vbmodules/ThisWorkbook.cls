@@ -9,10 +9,10 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Dim start_time As Double
+Dim startTime As Double
 
 Private Sub Workbook_Open()
-  start_time = Timer
+  startTime = Timer
 
   '// パス情報の取得
   Call Config.init("vba.ini")
@@ -31,13 +31,13 @@ Private Sub Workbook_Open()
   Application.ScreenUpdating = True
   Application.StatusBar = False
 
-  Call showTime(Timer - start_time)
+  Call showTime(Timer - startTime)
   MsgBox Config.getFullVersion()
 End Sub
 
 ' 保存時
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
-  start_time = Timer
+  startTime = Timer
 
   '// クライアントバリデーション
   Call Process.validate
@@ -70,7 +70,7 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
   Application.ScreenUpdating = True
   Application.StatusBar = False
 
-  Call showTime(Timer - start_time)
+  Call showTime(Timer - startTime)
   MsgBox "Git管理用ファイル、テーブル要素/OpenAPI要素を作成しました。"
 
   '// 開発モードの場合、モジュールを出力
