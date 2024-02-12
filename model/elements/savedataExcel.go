@@ -1,14 +1,10 @@
 package elements
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
-	"github.com/samber/lo"
 	"github.com/xuri/excelize/v2"
-	"golang.org/x/text/encoding/japanese"
-	"golang.org/x/text/transform"
 )
 
 const SHT_ELEMENTS = "項目"
@@ -107,73 +103,4 @@ func FromExcel(fileName string) (*SaveData, error) {
 		savedata.Segments = append(savedata.Segments, element)
 	}
 	return &savedata, nil
-}
-
-// toExcel(sht-elements)
-func (savedata *SaveData) ToExcelElements() error {
-	for _, element := range savedata.Elements {
-		element.toExcel()
-	}
-
-	return nil
-}
-
-func (element *Element) toExcel() {
-	t := japanese.ShiftJIS.NewEncoder()
-	ary := []string{
-		element.NameJp,
-		element.NameEn,
-		string(element.Domain),
-		lo.Ternary(lo.IsNil(element.RegEx), "", *element.RegEx),
-		int2Str(element.MinDigits),
-		int2Str(element.MaxDigits),
-		int2Str(element.MinValue),
-		int2Str(element.MaxValue),
-		element.Example,
-		element.Description,
-	}
-	sjis, _, _ := transform.String(t, strings.Join(ary, "\t"))
-	fmt.Println(sjis)
-}
-
-// toExcel(sht-derive-elements)
-func (savedata *SaveData) ToExcelDeriveElements() error {
-	for _, element := range savedata.DeliveElements {
-		element.toExcel()
-	}
-
-	return nil
-}
-
-func (element *DeliveElement) toExcel() {
-	t := japanese.ShiftJIS.NewEncoder()
-	ary := []string{
-		element.ref.NameJp,
-		element.NameJp,
-		element.NameEn,
-		element.Description,
-	}
-	sjis, _, _ := transform.String(t, strings.Join(ary, "\t"))
-	fmt.Println(sjis)
-}
-
-// toExcel(sht-derive-elements)
-func (savedata *SaveData) ToExcelSegments() error {
-	for _, element := range savedata.Segments {
-		element.toExcel()
-	}
-
-	return nil
-}
-
-func (element *Segment) toExcel() {
-	t := japanese.ShiftJIS.NewEncoder()
-	ary := []string{
-		element.ref.NameJp,
-		element.Value,
-		element.Name,
-		element.Description,
-	}
-	sjis, _, _ := transform.String(t, strings.Join(ary, "\t"))
-	fmt.Println(sjis)
 }

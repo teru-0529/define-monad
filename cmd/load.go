@@ -8,6 +8,8 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/teru-0529/define-monad/v3/model/elements"
+	"golang.org/x/text/encoding/japanese"
+	"golang.org/x/text/transform"
 )
 
 type ShtType string
@@ -39,14 +41,28 @@ var loadCmd = &cobra.Command{
 			return err
 		}
 
+		enc := japanese.ShiftJIS.NewEncoder()
+
 		if shtType == SHT_ELEMENTS {
-			monad.ToExcelElements()
+			for _, rec := range monad.ToExcelElements() {
+				// sjisに変換
+				sjis, _, _ := transform.String(enc, rec)
+				fmt.Println(sjis)
+			}
 
 		} else if shtType == SHT_DERIVE_ELEMENTS {
-			monad.ToExcelDeriveElements()
+			for _, rec := range monad.ToExcelDeriveElements() {
+				// sjisに変換
+				sjis, _, _ := transform.String(enc, rec)
+				fmt.Println(sjis)
+			}
 
 		} else if shtType == SHT_SEGMENTS {
-			monad.ToExcelSegments()
+			for _, rec := range monad.ToExcelSegments() {
+				// sjisに変換
+				sjis, _, _ := transform.String(enc, rec)
+				fmt.Println(sjis)
+			}
 
 		}
 

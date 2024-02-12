@@ -17,7 +17,8 @@ type OutType string
 var (
 	TYPE_DDL    OutType = "type-ddl"
 	API_ELEMENT OutType = "api-element"
-	DB_ELEMENT  OutType = "db-element"
+	// WARNING:削除
+	DB_ELEMENT OutType = "db-element"
 )
 
 var distTypeStr string
@@ -32,6 +33,7 @@ var outputCmd = &cobra.Command{
 
 		// INFO: 出力タイプが想定された種類ではない場合エラーを返す
 		var distType OutType = OutType(distTypeStr)
+		// WARNING:削除
 		if !slices.Contains([]OutType{TYPE_DDL, API_ELEMENT, DB_ELEMENT}, distType) {
 			return fmt.Errorf("input `dist-type` is not found: [%s]", distTypeStr)
 		}
@@ -53,6 +55,7 @@ var outputCmd = &cobra.Command{
 			fmt.Println("output type: api-element")
 			fmt.Printf("output yaml file: [%s]\n", filepath.ToSlash(distFile))
 
+			// WARNING:削除
 		} else if distType == DB_ELEMENT {
 			err := monad.WriteTableElements(distFile)
 			if err != nil {
@@ -69,6 +72,7 @@ var outputCmd = &cobra.Command{
 }
 
 func init() {
+	// WARNING:削除
 	outputCmd.Flags().StringVarP(&distTypeStr, "dist-type", "T", "", "output file type(one of 'type-ddl','api-element','db-element')")
 	outputCmd.Flags().StringVarP(&distFile, "dist-file", "F", "", "output file name")
 

@@ -25,6 +25,7 @@ type ApiElement struct {
 	Example     string   `yaml:"example"`
 }
 
+// WARNING:削除
 type TableElement struct {
 	NameJp          string  `yaml:"name_jp"`
 	NameEn          string  `yaml:"name_en"`
@@ -106,6 +107,7 @@ func (savedata *SaveData) WriteApiElements(path string) error {
 	return nil
 }
 
+// WARNING:削除
 // db-elementsの書き込み
 func (savedata *SaveData) WriteTableElements(path string) error {
 	tableElements := []TableElement{}
@@ -345,11 +347,13 @@ func (element *Element) dbModel() string {
 	}
 }
 
+// WARNING:削除
 // db制約(リダイレクトメソッド)
 func (element *Element) constraint() *string {
 	return element._constraint(element.nameEnSnake())
 }
 
+// WARNING:削除
 // db制約
 func (element *Element) _constraint(nameEnSnake string) *string {
 	if element.RegEx != nil {
@@ -376,11 +380,13 @@ func (element *Element) _constraint(nameEnSnake string) *string {
 	return nil
 }
 
+// WARNING:削除
 // DDLでNotNullを強制するかどうか
 func (element *Element) mustNotNull() bool {
 	return slices.Contains([]Dom{ENUM, BOOL}, element.Domain)
 }
 
+// WARNING:削除
 // DDLに記載するデフォルトが文字列扱いかどうか
 func (element *Element) isDefaultStr() bool {
 	return slices.Contains([]Dom{ID, ENUM, CODE, STRING, TEXT}, element.Domain)
@@ -391,6 +397,7 @@ func (element *DeliveElement) nameEnSnake() string {
 	return snakeCase(element.NameEn)
 }
 
+// WARNING:削除
 // db制約(リダイレクトメソッド)
 func (element *DeliveElement) constraint() *string {
 	return element.ref._constraint(element.nameEnSnake())
