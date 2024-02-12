@@ -77,13 +77,25 @@ Sub setFunction(ByRef area As Range, ByVal formula As String)
   '関数
   area.formula = formula
   '背景色
-  area.Interior.Color = RGB(255, 255, 213) 'CREAM
+  Call notInput(area)
 End Sub
 
 '// 表示形式
 Sub formatLocal(ByRef area As Range, ByVal formula As String)
   If area Is Nothing Then Exit Sub
   area.NumberFormatLocal = formula
+End Sub
+
+'// 表示位置
+Sub horizontalPosition(ByRef area As Range, ByVal formula As Integer)
+  If area Is Nothing Then Exit Sub
+  area.HorizontalAlignment = formula
+End Sub
+
+'// 背景色
+Sub notInput(ByRef area As Range)
+  If area Is Nothing Then Exit Sub
+  area.Interior.Color = RGB(255, 255, 213) 'CREAM
 End Sub
 
 '// IMEモード
