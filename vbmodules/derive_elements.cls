@@ -14,10 +14,12 @@ Const COL_NAME_DESCRIPTION = 5
 
 'シート選択時
 Private Sub Worksheet_Activate()
+  Application.ScreenUpdating = False
   Call work.element_reflesh '項目リストの最新化
   
   '// フォーマット
   Call areaFormat
+  Application.ScreenUpdating = True
 End Sub
 
 
@@ -61,7 +63,6 @@ End Sub
 
 'フォーマット
 Private Sub areaFormat()
-  Application.ScreenUpdating = False
   Application.EnableEvents = False
 
   '// 枠線
@@ -81,5 +82,4 @@ Private Sub areaFormat()
   Call Formatter.imeMode(Range("DERI_C"), Formatter.IME_MODE_OFF)
 
   Application.EnableEvents = True
-  Application.ScreenUpdating = True
 End Sub

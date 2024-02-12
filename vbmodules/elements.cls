@@ -17,8 +17,10 @@ Dim val As Variant '変更前の仮値
 
 'シート選択時
 Private Sub Worksheet_Activate()
+  Application.ScreenUpdating = False
   '// フォーマット
   Call areaFormat
+  Application.ScreenUpdating = True
 End Sub
 
 'セルの選択イベント
@@ -108,7 +110,6 @@ End Sub
 
 'フォーマット
 Private Sub areaFormat()
-  Application.ScreenUpdating = False
   Application.EnableEvents = False
 
   '// 枠線
@@ -133,7 +134,6 @@ Private Sub areaFormat()
   Call Formatter.imeMode(Range("ELEM_B"), Formatter.IME_MODE_OFF)
 
   Application.EnableEvents = True
-  Application.ScreenUpdating = True
 End Sub
 
 '// ドメインフォーマット
