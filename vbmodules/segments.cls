@@ -13,10 +13,12 @@ Const COL_ORIGINAL = 1
 
 'シート選択時
 Private Sub Worksheet_Activate()
+  Application.ScreenUpdating = False
   Call work.segment_reflesh '区分値リストの最新化
   
   '// フォーマット
   Call areaFormat
+  Application.ScreenUpdating = True
 End Sub
 
 '項目名の変更追随
@@ -56,7 +58,6 @@ End Sub
 
 '// フォーマット
 Private Sub areaFormat()
-  Application.ScreenUpdating = False
   Application.EnableEvents = False
 
   '// 枠線
@@ -73,5 +74,4 @@ Private Sub areaFormat()
   Call Formatter.imeMode(Range("SEGM_B"), Formatter.IME_MODE_OFF)
 
   Application.EnableEvents = True
-  Application.ScreenUpdating = True
 End Sub
