@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	"github.com/teru-0529/define-monad/model"
+	"github.com/teru-0529/define-monad/v3/model/elements"
 )
 
 // saveCmd represents the save command
@@ -18,7 +18,7 @@ var saveCmd = &cobra.Command{
 	Long:  "Get savedata from excel sheet and write yaml.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		monad, err := model.FromExcel(excelPath)
+		monad, err := elements.FromExcel(excelPath)
 		if err != nil {
 			return err
 		}

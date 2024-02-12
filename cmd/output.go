@@ -9,7 +9,7 @@ import (
 	"slices"
 
 	"github.com/spf13/cobra"
-	"github.com/teru-0529/define-monad/model"
+	"github.com/teru-0529/define-monad/v3/model/elements"
 )
 
 type OutType string
@@ -37,7 +37,7 @@ var outputCmd = &cobra.Command{
 		}
 
 		// INFO: save-dataの読込み
-		monad, err := model.NewSaveData(savedataPath)
+		monad, err := elements.New(savedataPath)
 		if err != nil {
 			return err
 		}

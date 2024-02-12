@@ -1,4 +1,4 @@
-package model
+package elements
 
 import (
 	"bytes"
@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/samber/lo"
-	"github.com/teru-0529/define-monad/store"
+	"github.com/teru-0529/define-monad/v3/store"
 	"gopkg.in/yaml.v3"
 )
 

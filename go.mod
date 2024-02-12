@@ -1,4 +1,4 @@
-module github.com/teru-0529/define-monad
+module github.com/teru-0529/define-monad/v3
 
 go 1.21.5
 
