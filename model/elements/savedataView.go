@@ -1,11 +1,11 @@
-package model
+package elements
 
 import (
 	"fmt"
 	"strconv"
 
 	"github.com/samber/lo"
-	"github.com/teru-0529/define-monad/store"
+	"github.com/teru-0529/define-monad/v3/store"
 )
 
 // elements-viewの書き込み

@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	"github.com/teru-0529/define-monad/model"
+	"github.com/teru-0529/define-monad/v3/model/elements"
 )
 
 var outDir string
@@ -23,7 +23,7 @@ var viewCmd = &cobra.Command{
 	Long:  "Generate tsv data for sphinx from savedata.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		monad, err := model.NewSaveData(savedataPath)
+		monad, err := elements.New(savedataPath)
 		if err != nil {
 			return err
 		}

@@ -1,4 +1,4 @@
-package model
+package elements
 
 import (
 	"errors"
@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/teru-0529/define-monad/store"
+	"github.com/teru-0529/define-monad/v3/store"
 	"gopkg.in/yaml.v3"
 )
 
@@ -68,7 +68,7 @@ type Segment struct {
 	ref         *Element // 参照元項目
 }
 
-func NewSaveData(path string) (*SaveData, error) {
+func New(path string) (*SaveData, error) {
 	// INFO: read
 	file, err := os.ReadFile(path)
 	if err != nil {
