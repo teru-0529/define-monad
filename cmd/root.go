@@ -16,7 +16,6 @@ var (
 	releaseDate string
 )
 var savedataPath string
-var excelPath string
 var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
@@ -52,7 +51,6 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.define-monad.yaml)")
 	// INFO:フラグ値を変数にBind
 	rootCmd.PersistentFlags().StringVarP(&savedataPath, "save-data", "D", "./save_data.yaml", "save-data path")
-	rootCmd.PersistentFlags().StringVarP(&excelPath, "excel-data", "E", "./項目定義.xlsm", "ui-excel path")
 }
 
 // initConfig reads in config file and ENV variables if set.
