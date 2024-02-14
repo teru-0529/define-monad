@@ -21,11 +21,12 @@ Public TYPES_DDL As String
 Public VIEW_DIR As String
 
 '// 操作モード
-Dim OPERATION_MODE As String
+Dim FULL_VERSION As String
+Public OPERATION_MODE As String
 
 '// バージョン情報取得（Full）
 Public Function getFullVersion() As String
-  getFullVersion = Process.outerExec("version -F")
+  getFullVersion = FULL_VERSION
 End Function
 
 '// バージョン情報取得
@@ -64,6 +65,9 @@ Public Sub init(ByVal iniFile As String)
 
   OPERATION_MODE = getIniValue("Operation", "mode", iniPath)
   Debug.Print "[config] OPERATION_MODE: " & OPERATION_MODE
+  
+  FULL_VERSION = Process.outerExec("version -F")
+  Debug.Print "[config] FULL_VERSION: " & FULL_VERSION
   
   Set FSO = Nothing
   Call Util.showTime(Timer - startTime)

@@ -11,6 +11,8 @@ import (
 	"github.com/teru-0529/define-monad/v3/model/elements"
 )
 
+var excelPath string
+
 // saveCmd represents the save command
 var saveCmd = &cobra.Command{
 	Use:   "save",
@@ -34,4 +36,5 @@ var saveCmd = &cobra.Command{
 }
 
 func init() {
+	saveCmd.Flags().StringVarP(&excelPath, "excel-data", "E", "./項目定義.xlsm", "ui-excel path")
 }
