@@ -31,6 +31,8 @@ Private Sub Workbook_Open()
   Application.ScreenUpdating = True
   Application.StatusBar = False
 
+  Debug.Print "[operationMode] " & Config.OPERATION_MODE
+  Debug.Print Config.getFullVersion
   Call showTime(Timer - startTime)
   MsgBox Config.getFullVersion()
 End Sub
@@ -70,10 +72,10 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
   Application.ScreenUpdating = True
   Application.StatusBar = False
 
-  Call showTime(Timer - startTime)
-  MsgBox "Git管理用ファイル、テーブル要素/OpenAPI要素を作成しました。"
-
+  Debug.Print "[operationMode] " & Config.OPERATION_MODE
   '// 開発モードの場合、モジュールを出力
   If Config.isDevelop() Then Call ExportModule.SaveModule
   Debug.Print Config.getFullVersion
+  Call showTime(Timer - startTime)
+  MsgBox "Git管理用ファイル、テーブル要素/OpenAPI要素を作成しました。"
 End Sub
