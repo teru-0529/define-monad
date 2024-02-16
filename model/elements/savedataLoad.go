@@ -82,7 +82,7 @@ func (element *Element) toTable() string {
 		element.isDefaultStr_(),
 		element.Description,
 		"0",
-		"",
+		element.NameJp,
 	}
 	return strings.Join(ary, "\t")
 }
@@ -115,6 +115,9 @@ func (element *Element) _constraint_(nameEnSnake string) string {
 	if element.RegEx != nil {
 		// 正規表現が設定されている
 		return fmt.Sprintf("(%s ~* '%s')", nameEnSnake, *element.RegEx)
+	} else if element.MinDigits != nil && element.MaxDigits != nil && element.MinDigits == element.MaxDigits {
+		// 最小桁数/最大桁数が等しい
+		return fmt.Sprintf("(LENGTH(%s) = %d)", nameEnSnake, *element.MinDigits)
 	} else if element.MinDigits != nil {
 		// 最小桁数が設定されている
 		return fmt.Sprintf("(LENGTH(%s) >= %d)", nameEnSnake, *element.MinDigits)
