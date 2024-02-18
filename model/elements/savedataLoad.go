@@ -36,7 +36,7 @@ func (savedata *SaveData) ToExcelDeriveElements() []string {
 
 func (element *DeliveElement) toExcel() string {
 	ary := []string{
-		element.ref.NameJp,
+		element.Ref.NameJp,
 		element.NameJp,
 		element.NameEn,
 		element.Description,
@@ -51,7 +51,7 @@ func (savedata *SaveData) ToExcelSegments() []string {
 
 func (element *Segment) toExcel() string {
 	ary := []string{
-		element.ref.NameJp,
+		element.Ref.NameJp,
 		element.Value,
 		element.Name,
 		element.Description,
@@ -92,13 +92,13 @@ func (element *DeliveElement) toTable() string {
 	ary := []string{
 		element.NameJp,
 		element.nameEnSnake(),
-		element.ref.dbModel(),
+		element.Ref.dbModel(),
 		element.constraint_(),
-		element.ref.mustNotNull_(),
-		element.ref.isDefaultStr_(),
+		element.Ref.mustNotNull_(),
+		element.Ref.isDefaultStr_(),
 		element.Description,
 		"1",
-		element.ref.NameJp,
+		element.Ref.NameJp,
 	}
 	return strings.Join(ary, "\t")
 }
@@ -157,5 +157,5 @@ func (element *Element) isDefaultStr_() string {
 // WARNING:メソッド名
 // db制約(リダイレクトメソッド)
 func (element *DeliveElement) constraint_() string {
-	return element.ref._constraint_(element.nameEnSnake())
+	return element.Ref._constraint_(element.nameEnSnake())
 }

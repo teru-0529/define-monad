@@ -57,7 +57,7 @@ type DeliveElement struct {
 	NameJp      string   `yaml:"name_jp"`
 	NameEn      string   `yaml:"name_en"`
 	Description string   `yaml:"description"`
-	ref         *Element // 参照元項目
+	Ref         *Element `yaml:"-"` // 参照元項目
 }
 
 type Segment struct {
@@ -65,7 +65,7 @@ type Segment struct {
 	Value       string   `yaml:"value"`
 	Name        string   `yaml:"name"`
 	Description string   `yaml:"description"`
-	ref         *Element // 参照元項目
+	Ref         *Element `yaml:"-"` // 参照元項目
 }
 
 func New(path string) (*SaveData, error) {
@@ -89,7 +89,7 @@ func New(path string) (*SaveData, error) {
 		if err != nil {
 			return nil, err
 		}
-		element.ref = original
+		element.Ref = original
 	}
 	for i := range savedata.Segments {
 		element := &savedata.Segments[i]
@@ -97,7 +97,7 @@ func New(path string) (*SaveData, error) {
 		if err != nil {
 			return nil, err
 		}
-		element.ref = original
+		element.Ref = original
 	}
 	return &savedata, nil
 }

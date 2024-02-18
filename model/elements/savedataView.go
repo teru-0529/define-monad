@@ -92,8 +92,8 @@ func (savedata *SaveData) WriteViewDeriveElements(path string) error {
 
 func (element *DeliveElement) toArray() []string {
 	return []string{
-		element.ref.NameJp,
-		element.ref.NameEn,
+		element.Ref.NameJp,
+		element.Ref.NameEn,
 		element.NameJp,
 		element.NameEn,
 		element.Description,
@@ -129,8 +129,8 @@ func (savedata *SaveData) WriteViewSegments(path string) error {
 
 func (element *Segment) toArray() []string {
 	return []string{
-		element.ref.NameJp,
-		element.ref.NameEn,
+		element.Ref.NameJp,
+		element.Ref.NameEn,
 		element.Value,
 		element.Name,
 		element.Description,

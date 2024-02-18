@@ -130,13 +130,13 @@ func (savedata *SaveData) WriteTableElements(path string) error {
 		tableElements = append(tableElements, TableElement{
 			NameJp:          element.NameJp,
 			NameEn:          element.nameEnSnake(),
-			DbModel:         element.ref.dbModel(),
+			DbModel:         element.Ref.dbModel(),
 			Constraint:      element.constraint(),
-			MustNotNull:     element.ref.mustNotNull(),
-			IsStringDefault: element.ref.isDefaultStr(),
+			MustNotNull:     element.Ref.mustNotNull(),
+			IsStringDefault: element.Ref.isDefaultStr(),
 			Description:     element.Description,
 			IsOrigin:        false,
-			Origin:          &element.ref.NameJp,
+			Origin:          &element.Ref.NameJp,
 		})
 	}
 
@@ -400,7 +400,7 @@ func (element *DeliveElement) nameEnSnake() string {
 // WARNING:削除
 // db制約(リダイレクトメソッド)
 func (element *DeliveElement) constraint() *string {
-	return element.ref._constraint(element.nameEnSnake())
+	return element.Ref._constraint(element.nameEnSnake())
 }
 
 // スネークケース変換(あえて独自に実装：数値を大文字と同じ(数値の前にアンダーバー)とする仕様)
