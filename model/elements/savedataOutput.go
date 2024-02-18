@@ -53,7 +53,7 @@ func (savedata *SaveData) WriteTypesDdl(path string) error {
 
 	// INFO: ENUMの項目のみ処理
 	for _, element := range lo.Filter(savedata.Elements, func(item Element, index int) bool { return item.Domain == ENUM }) {
-		nameJp, nameEn := element.NameJp, snakeCase(element.NameEn)
+		nameJp, nameEn := element.NameJp, SnakeCase(element.NameEn)
 
 		file.WriteString(fmt.Sprintf("-- %s\nDROP TYPE IF EXISTS %s;\n", nameJp, nameEn))
 		file.WriteString(fmt.Sprintf("CREATE TYPE %s AS enum (\n", nameEn))
@@ -317,7 +317,7 @@ func (element *Element) apiFormat() string {
 
 // スネークケースの名称
 func (element *Element) nameEnSnake() string {
-	return snakeCase(element.NameEn)
+	return SnakeCase(element.NameEn)
 }
 
 // db制約
@@ -394,7 +394,7 @@ func (element *Element) isDefaultStr() bool {
 
 // スネークケースの名称
 func (element *DeliveElement) nameEnSnake() string {
-	return snakeCase(element.NameEn)
+	return SnakeCase(element.NameEn)
 }
 
 // WARNING:削除
@@ -404,7 +404,7 @@ func (element *DeliveElement) constraint() *string {
 }
 
 // スネークケース変換(あえて独自に実装：数値を大文字と同じ(数値の前にアンダーバー)とする仕様)
-func snakeCase(camel string) string {
+func SnakeCase(camel string) string {
 	if camel == "" {
 		return camel
 	}
