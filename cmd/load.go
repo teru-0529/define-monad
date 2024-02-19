@@ -38,7 +38,8 @@ var loadCmd = &cobra.Command{
 		// INFO: save-dataの読込み
 		monad, err := elements.New(savedataPath)
 		if err != nil {
-			return err
+			// エラーにせず空のデータを返す
+			monad = &elements.SaveData{}
 		}
 
 		enc := japanese.ShiftJIS.NewEncoder()

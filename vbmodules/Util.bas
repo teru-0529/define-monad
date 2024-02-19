@@ -93,3 +93,8 @@ Public Function unionRange(ByVal rng1 As Range, ByVal rng2 As Range) As Range
     Set unionRange = Union(rng1, rng2)
   End If
 End Function
+
+'// 入力ファイルの存在チェック
+Public Function existFile(ByVal path As String) As Boolean
+  existFile = CreateObject("Scripting.FileSystemObject").FileExists(path)
+End Function
