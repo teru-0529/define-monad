@@ -12,10 +12,11 @@ Option Explicit
 '項目一覧（D列）の情報を最新化する
 Public Sub element_reflesh()
   Dim dist As Range, src As Range
-  Set dist = Range("D2"): dist.value = "NO_DATA"
+  Set dist = Range("D2")
   
   Range("項目リスト").ClearContents
   
+  dist.value = "NO_DATA"
   For Each src In elements.UsedRange.Offset(1).Resize(, 1) '項目シートの1列目が対照
     If src.value <> "" Then
       dist.value = src.value
@@ -29,10 +30,11 @@ End Sub
 '区分値一覧（F列）の情報を最新化する
 Public Sub segment_reflesh()
   Dim dist As Range, src As Range
-  Set dist = Range("F2"): dist.value = "NO_DATA"
+  Set dist = Range("F2")
   
   Range("区分値リスト").ClearContents
-  
+
+  dist.value = "NO_DATA"
   For Each src In elements.UsedRange.Offset(1).Resize(, 1) '項目シートの1列目が対照
     If src.value <> "" And src.Offset(, 3).value = "区分値" Then
       dist.value = src.value

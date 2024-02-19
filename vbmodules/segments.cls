@@ -34,6 +34,13 @@ Public Sub load(ByVal data As String)
   '// 初期化
   UsedRange.Offset(1).Clear
 
+  '// 入力値が存在しない場合、フォーマットのみ実施
+  If data = "" Then
+    '// フォーマット
+    Call areaFormat
+    Exit Sub
+  End If
+    
   '// 行ごとのデータに分割
   records = Split(data, vbLf)
   rowLength = UBound(records)

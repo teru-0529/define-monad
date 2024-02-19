@@ -19,6 +19,11 @@ Private Sub Workbook_Open()
 
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  '// 入力ファイルの存在チェック
+  If Not Util.existFile(SAVE_DATA) Then
+    MsgBox "入力ファイルが存在しないため空シートを生成します" & vbCrLf & "[" & SAVE_DATA & "]"
+  End If
+  
   '// 読込み
   Call elements.load(outerExec("load -S elements -D " & SAVE_DATA))
   Call derive_elements.load(outerExec("load -S derive-elements -D " & SAVE_DATA))

@@ -22,7 +22,6 @@ Private Sub Worksheet_Activate()
   Application.ScreenUpdating = True
 End Sub
 
-
 '項目名の変更追随
 Public Sub replace_element_name(ByVal old_val As String, ByVal new_val As String)
   UsedRange.Resize(, 1).Replace what:=old_val, replacement:=new_val
@@ -36,6 +35,13 @@ Public Sub load(ByVal data As String)
   '// 初期化
   UsedRange.Offset(1).Clear
 
+  '// 入力値が存在しない場合、フォーマットのみ実施
+  If data = "" Then
+    '// フォーマット
+    Call areaFormat
+    Exit Sub
+  End If
+    
   '// 行ごとのデータに分割
   records = Split(data, vbLf)
   rowLength = UBound(records)
