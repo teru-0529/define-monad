@@ -57,9 +57,6 @@ Private Sub Workbook_AfterSave(ByVal Success As Boolean)
   '// Yamlファイルの出力
   Call outerExec("save -D " & SAVE_DATA & " -E " & ThisWorkbook.FullName)
 
-  '// テーブル定義用要素を保存したyamlファイルから生成(golang呼び出し)
-  Call outerExec("output -T db-element -D " & SAVE_DATA & " -F " & TABLE_ELEMENTS)
-
   '// OpenAPI定義用要素を保存したyamlファイルから生成(golang呼び出し)
   Call outerExec("output -T api-element -D " & SAVE_DATA & " -F " & API_ELEMENTS)
 

@@ -1,8 +1,6 @@
 package elements
 
 import (
-	"fmt"
-	"slices"
 	"strings"
 
 	"github.com/samber/lo"
@@ -57,105 +55,4 @@ func (element *Segment) toExcel() string {
 		element.Description,
 	}
 	return strings.Join(ary, "\t")
-}
-
-// toTableElements
-func (savedata *SaveData) TotableElements() []string {
-	result := []string{}
-	for _, element := range savedata.Elements {
-		result = append(result, element.toTable())
-	}
-	for _, element := range savedata.DeliveElements {
-		result = append(result, element.toTable())
-	}
-	return result
-}
-
-// WARNING:メソッド名
-func (element *Element) toTable() string {
-	ary := []string{
-		element.NameJp,
-		element.nameEnSnake(),
-		element.dbModel(),
-		element.constraint_(),
-		element.mustNotNull_(),
-		element.isDefaultStr_(),
-		element.Description,
-		"0",
-		element.NameJp,
-	}
-	return strings.Join(ary, "\t")
-}
-
-// WARNING:メソッド名
-func (element *DeliveElement) toTable() string {
-	ary := []string{
-		element.NameJp,
-		element.nameEnSnake(),
-		element.Ref.dbModel(),
-		element.constraint_(),
-		element.Ref.mustNotNull_(),
-		element.Ref.isDefaultStr_(),
-		element.Description,
-		"1",
-		element.Ref.NameJp,
-	}
-	return strings.Join(ary, "\t")
-}
-
-// WARNING:メソッド名
-// db制約(リダイレクトメソッド)
-func (element *Element) constraint_() string {
-	return element._constraint_(element.nameEnSnake())
-}
-
-// WARNING:メソッド名
-// db制約
-func (element *Element) _constraint_(nameEnSnake string) string {
-	if element.RegEx != nil {
-		// 正規表現が設定されている
-		return fmt.Sprintf("(%s ~* '%s')", nameEnSnake, *element.RegEx)
-	} else if element.MinDigits != nil && element.MaxDigits != nil && element.MinDigits == element.MaxDigits {
-		// 最小桁数/最大桁数が等しい
-		return fmt.Sprintf("(LENGTH(%s) = %d)", nameEnSnake, *element.MinDigits)
-	} else if element.MinDigits != nil {
-		// 最小桁数が設定されている
-		return fmt.Sprintf("(LENGTH(%s) >= %d)", nameEnSnake, *element.MinDigits)
-	} else if element.MinValue != nil && element.MaxValue != nil {
-		// 最小値・最大値の両方が設定されている
-		return fmt.Sprintf("(%d <= %s AND %s <= %d)", *element.MinValue, nameEnSnake, nameEnSnake, *element.MaxValue)
-	} else if element.MinValue != nil {
-		// 最小値が設定されている
-		return fmt.Sprintf("(%s >= %d)", nameEnSnake, *element.MinValue)
-	} else if element.MaxValue != nil {
-		// 最大値が設定されている
-		return fmt.Sprintf("(%s <= %d)", nameEnSnake, *element.MaxValue)
-	}
-	return ""
-}
-
-// WARNING:メソッド名
-// DDLでNotNullを強制するかどうか
-func (element *Element) mustNotNull_() string {
-	if slices.Contains([]Dom{ENUM, BOOL}, element.Domain) {
-		return "true"
-	} else {
-		return "false"
-	}
-}
-
-// WARNING:メソッド名
-// DDLに記載するデフォルトが文字列扱いかどうか
-func (element *Element) isDefaultStr_() string {
-	if slices.Contains([]Dom{ID, ENUM, CODE, STRING, TEXT}, element.Domain) {
-		return "true"
-	} else {
-		return "false"
-	}
-}
-
-// WARNING:メソッド名
-// db制約(リダイレクトメソッド)
-func (element *DeliveElement) constraint_() string {
-	return element.Ref._constraint_(element.nameEnSnake())
 }
