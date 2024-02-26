@@ -29,15 +29,15 @@ Private Sub Workbook_Open()
     ThisWorkbook.Close SaveChanges:=False
   End If
   
-  If Not Util.existFile(SAVE_DATA) Then
-    MsgBox "入出力ファイルが存在しないため空シートを生成します" & vbCrLf & "[" & SAVE_DATA & "]"
-  End If
-  
   '// パス情報の取得
   Call Config.init("vba.ini")
 
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  If Not Util.existFile(SAVE_DATA) Then
+    MsgBox "入出力ファイルが存在しないため空シートを生成します" & vbCrLf & "[" & SAVE_DATA & "]"
+  End If
+  
   '// 読込み
   Call elements.load(outerExec("load -S elements -D " & SAVE_DATA))
   Call derive_elements.load(outerExec("load -S derive-elements -D " & SAVE_DATA))
