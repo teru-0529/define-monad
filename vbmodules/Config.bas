@@ -23,6 +23,7 @@ Public VIEW_DIR As String
 '// 操作モード
 Dim FULL_VERSION As String
 Public OPERATION_MODE As String
+Public Const CLI_FILE = "define-monad.exe"
 
 '// バージョン情報取得（Full）
 Public Function getFullVersion() As String
@@ -82,7 +83,7 @@ Private Function getIniValue(ByVal base As String, ByVal key As String, ByVal pa
   getIniValue = Trim(Left(temp, InStr(temp, vbNullChar) - 1))
 End Function
 
-Private Function absPath(ByVal path) As String
+Public Function absPath(ByVal path) As String
   '// 絶対パスを取得
   absPath = CreateObject("Scripting.FileSystemObject").BuildPath(ThisWorkbook.path, path)
 End Function

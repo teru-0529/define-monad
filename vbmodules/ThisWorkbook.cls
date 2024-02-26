@@ -20,8 +20,22 @@ Private Sub Workbook_Open()
   Application.ScreenUpdating = False
   '■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
   '// 入力ファイルの存在チェック
+  If Not Util.existFile(Config.absPath(CLI_FILE)) Then
+    MsgBox "バックエンド処理用CLIファイルが存在しません [" & CLI_FILE & "]" & _
+    vbCrLf & vbCrLf & ThisWorkbook.name & "と同じディレクトリに " & CLI_FILE & " を格納してください"
+    '// 保存せず終了する
+    ThisWorkbook.Close SaveChanges:=False
+  End If
+  
+  If Not Util.existFile(Config.absPath("vba.ini")) Then
+    MsgBox "vba設定ファイルが存在しません [vba.ini]" & _
+    vbCrLf & vbCrLf & ThisWorkbook.name & "と同じディレクトリに vba.ini を格納してください"
+    '// 保存せず終了する
+    ThisWorkbook.Close SaveChanges:=False
+  End If
+  
   If Not Util.existFile(SAVE_DATA) Then
-    MsgBox "入力ファイルが存在しないため空シートを生成します" & vbCrLf & "[" & SAVE_DATA & "]"
+    MsgBox "入出力ファイルが存在しないため空シートを生成します" & vbCrLf & "[" & SAVE_DATA & "]"
   End If
   
   '// 読込み
