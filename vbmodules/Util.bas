@@ -96,5 +96,5 @@ End Function
 
 '// 入力ファイルの存在チェック
 Public Function existFile(ByVal path As String) As Boolean
-  existFile = CreateObject("Scripting.FileSystemObject").FileExists(path)
+  existFile = CreateObject("Scripting.FileSystemObject").fileexists(path)
 End Function

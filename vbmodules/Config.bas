@@ -1,86 +1,20 @@
 Attribute VB_Name = "Config"
 Option Explicit
 
-'// iniファイル読込み用関数定義
-Declare PtrSafe Function GetPrivateProfileString Lib _
-    "kernel32" Alias "GetPrivateProfileStringA" ( _
-    ByVal section As String, _
-    ByVal key As Any, _
-    ByVal default As String, _
-    ByVal value As String, _
-    ByVal Size As Long, _
-    ByVal ini_path As String _
-) As Long
+Const CHAR_SET = "UTF-8"
 
-'// 入出力パス
 Public SAVE_DATA As String
-Public TABLE_ELEMENTS As String
 Public API_ELEMENTS As String
 Public TYPES_DDL As String
-
 Public VIEW_DIR As String
 
-'// 操作モード
-Dim FULL_VERSION As String
+Public FULL_VERSION As String
 Public OPERATION_MODE As String
 Public Const CLI_FILE = "define-monad.exe"
-
-'// バージョン情報取得（Full）
-Public Function getFullVersion() As String
-  getFullVersion = FULL_VERSION
-End Function
-
-'// バージョン情報取得
-Public Function getVersion() As String
-  getVersion = Process.outerExec("version")
-End Function
 
 '// 開発モードの場合にTrue
 Public Function isDevelop() As Boolean
   isDevelop = OPERATION_MODE = "develop"
-End Function
-
-'// ./vba.iniから情報を取得してPublic変数に設定する
-Public Sub init(ByVal iniFile As String)
-  Dim startTime As Double: startTime = Timer
-
-  Dim FSO As Object: Set FSO = CreateObject("Scripting.FileSystemObject")
-  Dim iniPath As String: iniPath = FSO.BuildPath(ThisWorkbook.path, iniFile)
-
-  Debug.Print "|----|---- configuration setup start ----|----|"
-
-  SAVE_DATA = absPath(getIniValue("Path", "saveData", iniPath))
-  Debug.Print "[config] SAVE_DATA: " & SAVE_DATA
-
-  TABLE_ELEMENTS = absPath(getIniValue("Path", "tableElements", iniPath))
-  Debug.Print "[config] TABLE_ELEMENTS: " & TABLE_ELEMENTS
-
-  API_ELEMENTS = absPath(getIniValue("Path", "apiElements", iniPath))
-  Debug.Print "[config] API_ELEMENTS: " & API_ELEMENTS
-
-  TYPES_DDL = absPath(getIniValue("Path", "typesDDL", iniPath))
-  Debug.Print "[config] TYPES_DDL: " & TYPES_DDL
-
-  VIEW_DIR = absPath(getIniValue("Path", "viewDir", iniPath))
-  Debug.Print "[config] VIEW_DIR: " & VIEW_DIR
-
-  OPERATION_MODE = getIniValue("Operation", "mode", iniPath)
-  Debug.Print "[config] OPERATION_MODE: " & OPERATION_MODE
-  
-  FULL_VERSION = Process.outerExec("version -F")
-  Debug.Print "[config] FULL_VERSION: " & FULL_VERSION
-  
-  Set FSO = Nothing
-  Call Util.showTime(Timer - startTime)
-  Debug.Print "|----|---- configuration setup end ----|----|"
-End Sub
-
-Private Function getIniValue(ByVal base As String, ByVal key As String, ByVal path As String) As String
-  Const TEMP_LENGTH = 255
-  Dim temp As String: temp = Space(TEMP_LENGTH)
-
-  Call GetPrivateProfileString(base, key, "N/A", temp, TEMP_LENGTH, path)
-  getIniValue = Trim(Left(temp, InStr(temp, vbNullChar) - 1))
 End Function
 
 Public Function absPath(ByVal path) As String
@@ -88,4 +22,64 @@ Public Function absPath(ByVal path) As String
   absPath = CreateObject("Scripting.FileSystemObject").BuildPath(ThisWorkbook.path, path)
 End Function
 
+'// .envから情報を取得してPublic変数に設定する
+Public Sub getEnv()
+  Const ENV_FILE = ".env"
+  
+  Dim adoSt As Object
+  Dim line As String, v() As String
+  Dim dic As New Dictionary
+  Dim startTime As Double: startTime = Timer
+  
+  Set adoSt = CreateObject("ADODB.Stream")
 
+  With adoSt
+    .Type = adTypeText
+    .Charset = CHAR_SET
+    .LineSeparator = adLF
+    .Open
+    Call .LoadFromFile(absPath(ENV_FILE))
+    
+    Do While Not (.EOS)
+      line = .ReadText(adReadLine)
+      
+      If Len(line) = 0 Then GoTo CONTINUE
+      If Left(line, 1) = "#" Then GoTo CONTINUE
+      
+      '// データ行
+      If InStr(1, line, "=") > 0 Then
+        v = Split(line, "=")
+        '// Dictionaryに登録
+        Call dic.Add(v(0), v(1))
+      End If
+      Debug.Print line
+
+CONTINUE:
+    Loop
+    
+    .Close
+  End With
+  Set adoSt = Nothing
+
+  Debug.Print "|----|---- configuration setup start ----|----|"
+  SAVE_DATA = absPath(dic.item("saveData"))
+  Debug.Print "[config] SAVE_DATA: " & SAVE_DATA
+
+  API_ELEMENTS = absPath(dic.item("apiElements"))
+  Debug.Print "[config] API_ELEMENTS: " & API_ELEMENTS
+
+  TYPES_DDL = absPath(dic.item("typesDDL"))
+  Debug.Print "[config] TYPES_DDL: " & TYPES_DDL
+
+  VIEW_DIR = absPath(dic.item("viewDir"))
+  Debug.Print "[config] VIEW_DIR: " & VIEW_DIR
+
+  OPERATION_MODE = dic.item("mode")
+  Debug.Print "[config] OPERATION_MODE: " & OPERATION_MODE
+  
+  FULL_VERSION = Process.outerExec("version -F")
+  Debug.Print "[config] FULL_VERSION: " & FULL_VERSION
+  
+  Call Util.showTime(Timer - startTime)
+  Debug.Print "|----|---- configuration setup end ----|----|"
+End Sub

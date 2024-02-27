@@ -102,3 +102,10 @@ goreleaser init
 * builds:の　`- darwin`（mac用）　を削除
 * archivesに　`files:`　を追加
 * changelogに  `use: github-native`　を追加
+
+## cobraのテストを考える
+
+viperのアンマーシャル
+https://github.com/tmatias/viper-toml-unmarshal/blob/master/main.go
+
+https://text.baldanders.info/golang/using-and-testing-cobra/
