@@ -52,7 +52,6 @@ Public Sub getEnv()
         '// Dictionary‚É“o˜^
         Call dic.Add(v(0), v(1))
       End If
-      Debug.Print line
 
 CONTINUE:
     Loop
