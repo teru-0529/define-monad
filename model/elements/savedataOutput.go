@@ -26,7 +26,7 @@ type ApiElement struct {
 }
 
 // types-ddlの書き込み
-func (savedata *SaveData) WriteTypesDdl(path string) error {
+func (savedata *SaveData) WriteTypesDdl(path string, schema string) error {
 	// INFO: Fileの取得
 	file, cleanup, err := store.NewFile(path)
 	if err != nil {
@@ -40,6 +40,9 @@ func (savedata *SaveData) WriteTypesDdl(path string) error {
 	// INFO: ENUMの項目のみ処理
 	for _, element := range lo.Filter(savedata.Elements, func(item Element, index int) bool { return item.Domain == ENUM }) {
 		nameJp, nameEn := element.NameJp, SnakeCase(element.NameEn)
+		if schema != "" {
+			nameEn = fmt.Sprintf("%s.%s", schema, nameEn)
+		}
 
 		file.WriteString(fmt.Sprintf("-- %s\nDROP TYPE IF EXISTS %s;\n", nameJp, nameEn))
 		file.WriteString(fmt.Sprintf("CREATE TYPE %s AS enum (\n", nameEn))

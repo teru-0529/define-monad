@@ -43,7 +43,7 @@ var outputCmd = &cobra.Command{
 		fmt.Printf("input yaml file: [%s]\n", filepath.ToSlash(filepath.Clean(savedataPath)))
 
 		if distType == TYPE_DDL {
-			monad.WriteTypesDdl(distFile)
+			monad.WriteTypesDdl(distFile, "")
 			fmt.Println("output type: type-ddl")
 			fmt.Printf("output sql file: [%s]\n", filepath.ToSlash(distFile))
 
